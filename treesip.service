@@ -3,7 +3,7 @@ Description="Service that gets Instance ID, then the tags in AWS and based on th
 After=network.target
 
 [Service]
-ExecStart=/home/ubuntu/EC2TestAutomator/main.sh
+ExecStart=su ubuntu -c 'bash /home/ubuntu/EC2TestAutomator/main.sh'
 
 [Install]
 WantedBy=default.target
