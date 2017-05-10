@@ -1,4 +1,4 @@
-#!\bin\bash
+#!/bin/bash
 
 # Make the script to run at boot time
 # chmod 744 /home/ubuntu/EC2TestAutomator/main.sh
