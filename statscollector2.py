@@ -10,6 +10,7 @@ __author__ = 'chepe'
 # A python script connecting to a MongoDB given a MongoDB Connection URI.
 
 import sys
+import glob
 from pymongo import MongoClient
 
 ###############################################################################
@@ -17,6 +18,36 @@ from pymongo import MongoClient
 ###############################################################################
 
 def main(args):
+
+    ###############################################################################
+    # First we read all logs, collecting the important values
+    ###############################################################################
+
+    # Set folder:
+    folder = "/home/ubuntu/logs"
+
+    # Get filepaths for all files which end with ".txt" and start with "travel_times_to_ 59721":
+    filepaths = glob.glob(os.path.join(folder, '*.log'))
+
+    # Create an empty list for collecting the headers
+    headers = []
+
+    # iterate for each file path in the list
+    for fp in filepaths:
+        # Open the file in read mode
+        with open(fp, 'r') as f:
+            for line in f:
+                # Read the first line of the file
+                print(line)
+                # Append the first line into the headers-list
+                # headers.append(first_line)
+
+    # After going trough all the files, print the list of headers
+    print(headers)
+
+    ###############################################################################
+    # Then we connect to MongoDB and store the values
+    ###############################################################################
 
     connection = MongoClient('54.186.74.114', 27017)
     # connection.admin.authenticate('chepeftw', '<nope>', mechanism='SCRAM-SHA-1')
