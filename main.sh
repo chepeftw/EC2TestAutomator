@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/bash -
 
 # Make the script to run at boot time
-# chmod 744 /home/ubuntu/EC2TestAutomator/main.sh
+# chmod +x /home/ubuntu/EC2TestAutomator/main.sh
 # sudo cp treesip.service /etc/systemd/system/
 # chmod 664 /etc/systemd/system/treesip.service
 # systemctl daemon-reload
