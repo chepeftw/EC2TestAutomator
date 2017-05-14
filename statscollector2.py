@@ -48,8 +48,8 @@ def main(args):
     # Then we connect to MongoDB and store the values
     ###############################################################################
 
-    connection = MongoClient('54.186.74.114', 27017)
     # connection.admin.authenticate('chepeftw', '<nope>', mechanism='SCRAM-SHA-1')
+    connection = MongoClient('10.0.0.54', 27017)
 
     # connect to the students database and the ctec121 collection
     db = connection.treesip.results
