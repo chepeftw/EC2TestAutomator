@@ -53,26 +53,26 @@ def main(args):
 
     # connect to the treesip database and the results collection
     db = connection.treesip.results
+
      
-    # create a dictionary to hold student documents
+    # find all documents
+    results = db.find()
+
+    print()
+    print('+-+-+-+-+-+-+-+-+-+-+-+-+-+-')
+
+    # display documents from collection
+    for record in results:
+        # print out the document
+        print(record['name'] + ',',record['grade'])
+
+    print()
+
      
     # create dictionary and place values in dictionary
     record = {'result': result, 'convergence': convergence, 'time': datetime.now()}
     # insert the record
     db.insert_one(record)
-     
-    # find all documents
-    # results = db.find()
-    #
-    # print()
-    # print('+-+-+-+-+-+-+-+-+-+-+-+-+-+-')
-    #
-    # # display documents from collection
-    # for record in results:
-    #     # print out the document
-    #     print(record['name'] + ',',record['grade'])
-    #
-    # print()
      
     # close the connection to MongoDB
     connection.close()
