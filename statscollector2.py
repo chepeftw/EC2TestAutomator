@@ -51,7 +51,7 @@ def main(args):
     # connection.admin.authenticate('chepeftw', '<nope>', mechanism='SCRAM-SHA-1')
     connection = MongoClient('10.0.0.54', 27017)
 
-    # connect to the students database and the ctec121 collection
+    # connect to the treesip database and the results collection
     db = connection.treesip.results
      
     # create a dictionary to hold student documents
@@ -59,7 +59,7 @@ def main(args):
     # create dictionary and place values in dictionary
     record = {'result': result, 'convergence': convergence, 'time': datetime.now()}
     # insert the record
-    db.insert(record)
+    db.insert_one(record)
      
     # find all documents
     # results = db.find()
