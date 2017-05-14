@@ -53,8 +53,8 @@ def main(args):
     connection = MongoClient('10.0.0.54', 27017)
     time.sleep(2)
 
-    # connect to the treesip database and the results collection
-    db = connection.treesip.results
+    # connect to the treesip database and the testcases collection
+    db = connection.treesip.testcases
 
 
     # find all documents
