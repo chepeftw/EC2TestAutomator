@@ -31,7 +31,7 @@ def main(args):
     CONVERGENCE_TIME_STRING = " CONVERGENCE_TIME="
 
     # variables
-    result = ""
+    computation = ""
     convergence = ""
 
     # iterate for each file path in the list
@@ -40,7 +40,7 @@ def main(args):
         with open(fp, 'r') as f:
             for line in f:
                 if RESULT_STRING in line :
-                    result = line.split( RESULT_STRING )[1].rstrip()
+                    computation = line.split( RESULT_STRING )[1].rstrip()
                 elif CONVERGENCE_TIME_STRING in line :
                     convergence = line.split(CONVERGENCE_TIME_STRING)[1].rstrip()
 
@@ -72,7 +72,7 @@ def main(args):
 
      
     # create dictionary and place values in dictionary
-    record = {'result': result, 'convergence': convergence, 'time': datetime.now()}
+    record = {'computation': computation, 'convergence': convergence, 'time': datetime.now()}
     # insert the record
     db.insert_one(record)
      
