@@ -39,9 +39,9 @@ def main(args):
         with open(fp, 'r') as f:
             for line in f:
                 if RESULT_STRING in line :
-                    result = line.split( RESULT_STRING )[1]
+                    result = line.split( RESULT_STRING )[1].rstrip()
                 elif CONVERGENCE_TIME_STRING in line :
-                    convergence = line.split(CONVERGENCE_TIME_STRING)[1]
+                    convergence = line.split(CONVERGENCE_TIME_STRING)[1].rstrip()
 
 
     ###############################################################################
