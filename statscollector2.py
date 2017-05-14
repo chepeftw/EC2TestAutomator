@@ -3,6 +3,7 @@
 import os
 import sys
 import glob
+import time
 from pymongo import MongoClient
 from datetime import datetime
 
@@ -50,11 +51,12 @@ def main(args):
 
     # connection.admin.authenticate('chepeftw', '<nope>', mechanism='SCRAM-SHA-1')
     connection = MongoClient('10.0.0.54', 27017)
+    time.sleep(2)
 
     # connect to the treesip database and the results collection
     db = connection.treesip.results
 
-     
+
     # find all documents
     results = db.find()
 
