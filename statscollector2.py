@@ -57,7 +57,7 @@ def main(args):
     # create a dictionary to hold student documents
      
     # create dictionary and place values in dictionary
-    record = {'result': result, 'convergence': convergence, 'time': datetime.datetime.now()}
+    record = {'result': result, 'convergence': convergence, 'time': datetime.now()}
     # insert the record
     db.insert(record)
      
