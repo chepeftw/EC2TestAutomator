@@ -49,52 +49,10 @@ def main(args):
     # Then we connect to MongoDB and store the values
     ###############################################################################
 
-    # connection.admin.authenticate('chepeftw', '<nope>', mechanism='SCRAM-SHA-1')
-    connection = MongoClient('10.0.0.54', 27017)
-    time.sleep(2)
-
-    # connect to the students database and the ctec121 collection
-    db = connection.students.test
-
-    # create a dictionary to hold student documents
-
-    # create dictionary
-    student_record = {}
-
-    # set flag variable
-    flag = True
-
-    # loop for data input
-    while (flag):
-        # ask for input
-        # student_name,student_grade = input("Enter student name and grade: ").split(',')
-        student_name = 'chepe'
-        student_grade = 90
-        # place values in dictionary
-        student_record = {'name': student_name, 'grade': student_grade}
-        # insert the record
-        db.insert(student_record)
-        flag = False
-
-
 
 
     # connect to the treesip database and the testcases collection
     db = connection.treesip.testcases
-
-
-    # find all documents
-    results = db.find()
-
-    print()
-    print('+-+-+-+-+-+-+-+-+-+-+-+-+-+-')
-
-    # display documents from collection
-    for record in results:
-        # print out the document
-        print(record['name'] + ',',record['grade'])
-
-    print()
 
      
     # create dictionary and place values in dictionary
