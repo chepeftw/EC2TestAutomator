@@ -1,18 +1,13 @@
 #!/usr/bin/python
 
-# Copyright (c) 2017 ObjectLabs Corporation
-# Distributed under the MIT license - http://opensource.org/licenses/MIT
+import os
+import sys
+import glob
+from pymongo import MongoClient
 from datetime import datetime
 
 __author__ = 'chepe'
 
-# Written with pymongo-3.4
-# Documentation: http://docs.mongodb.org/ecosystem/drivers/python/
-# A python script connecting to a MongoDB given a MongoDB Connection URI.
-
-import sys
-import glob
-from pymongo import MongoClient
 
 ###############################################################################
 # main
