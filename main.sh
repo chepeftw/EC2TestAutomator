@@ -18,9 +18,51 @@ TAGS=$(~/.local/bin/aws ec2 describe-tags --filters "Name=resource-id,Values=$IN
 echo "$TAGS"
 
 # Then we select the tag we need
-FOO=$(echo "$TAGS" | grep Foo | cut -f5)
+TS_NODES=$(echo "$TAGS" | grep Nodes | cut -f5)
+TS_CYCLES=$(echo "$TAGS" | grep Cycles | cut -f5)
+TS_TIME=$(echo "$TAGS" | grep Time | cut -f5)
 
-echo $FOO
+echo "Nodes $TS_NODES"
+echo "Time $TS_TIME"
+echo "Cycles $TS_CYCLES"
+
+# We make sure we got the values, otherwise we abort mission
+if [ -z "$TS_NODES" ]
+  then
+    echo "No number of nodes supplied"
+    exit 1
+fi
+
+if [ -z "$TS_TIME" ]
+  then
+    echo "No time supplied"
+    exit 1
+fi
+
+if [ -z "$TS_CYCLES" ]
+  then
+    echo "No number of cycles supplied"
+    exit 1
+fi
+
+
+# We make sure we got the values, otherwise we abort mission
+COUNTER=0
+cd /home/ubuntu/tap
+while [  $COUNTER -lt $TS_CYCLES ]; do
+	echo "python main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full"
+
+	python3 main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full
+
+	# call statistics collector
+	python3 /home/ubuntu/ec2testautomator/statsrecollector2.py
+
+	DATENOW=$(date +"%y_%m_%d_%H_%M")
+	mkdir -p var/archive/$DATENOW
+	mv var/log/* var/archive/$DATENOW/
+
+	let COUNTER=COUNTER+1 
+done
 
 date > /home/ubuntu/foo.txt
 echo $FOO >> /home/ubuntu/foo.txt

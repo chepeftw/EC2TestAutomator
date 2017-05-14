@@ -2,6 +2,7 @@
 
 # Copyright (c) 2017 ObjectLabs Corporation
 # Distributed under the MIT license - http://opensource.org/licenses/MIT
+from datetime import datetime
 
 __author__ = 'chepe'
 
@@ -24,26 +25,29 @@ def main(args):
     ###############################################################################
 
     # Set folder:
-    folder = "/home/ubuntu/logs"
+    folder = "/home/ubuntu/tap/var/log/"
 
     # Get filepaths for all files which end with ".txt" and start with "travel_times_to_ 59721":
-    filepaths = glob.glob(os.path.join(folder, '*.log'))
+    filepaths = glob.glob(os.path.join(folder, '**/*.log'), recursive=True)
 
-    # Create an empty list for collecting the headers
-    headers = []
+    # log constants
+    RESULT_STRING = " RESULT="
+    CONVERGENCE_TIME_STRING = " CONVERGENCE_TIME="
+
+    # variables
+    result = ""
+    convergence = ""
 
     # iterate for each file path in the list
     for fp in filepaths:
         # Open the file in read mode
         with open(fp, 'r') as f:
             for line in f:
-                # Read the first line of the file
-                print(line)
-                # Append the first line into the headers-list
-                # headers.append(first_line)
+                if RESULT_STRING in line :
+                    result = line.split( RESULT_STRING )[1]
+                elif CONVERGENCE_TIME_STRING in line :
+                    convergence = line.split(CONVERGENCE_TIME_STRING)[1]
 
-    # After going trough all the files, print the list of headers
-    print(headers)
 
     ###############################################################################
     # Then we connect to MongoDB and store the values
@@ -53,27 +57,27 @@ def main(args):
     # connection.admin.authenticate('chepeftw', '<nope>', mechanism='SCRAM-SHA-1')
 
     # connect to the students database and the ctec121 collection
-    db = connection.students.test
+    db = connection.treesip.results
      
     # create a dictionary to hold student documents
      
     # create dictionary and place values in dictionary
-    student_record = {'name':'chepe','grade':90}
+    record = {'result': result, 'convergence': convergence, 'time': datetime.datetime.now()}
     # insert the record
-    db.insert(student_record)
+    db.insert(record)
      
     # find all documents
-    results = db.find()
-     
-    print()
-    print('+-+-+-+-+-+-+-+-+-+-+-+-+-+-')
-     
-    # display documents from collection
-    for record in results:
-        # print out the document
-        print(record['name'] + ',',record['grade'])
-     
-    print()
+    # results = db.find()
+    #
+    # print()
+    # print('+-+-+-+-+-+-+-+-+-+-+-+-+-+-')
+    #
+    # # display documents from collection
+    # for record in results:
+    #     # print out the document
+    #     print(record['name'] + ',',record['grade'])
+    #
+    # print()
      
     # close the connection to MongoDB
     connection.close()
