@@ -85,7 +85,7 @@ def main(args):
 
      
     # create dictionary and place values in dictionary
-    record = {'computation': computation, 'convergence': convergence, 'time': datetime.now(), 'nodes':args.ndes, 'duration':args.time}
+    record = {'computation': computation, 'convergence': convergence, 'time': datetime.now(), 'nodes':args.nodes, 'duration':args.time}
     # insert the record
     db.insert_one(record)
      
