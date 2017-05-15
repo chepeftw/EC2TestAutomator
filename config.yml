@@ -1,0 +1,5 @@
+parameters:
+    host: 10.0.0.54
+    port: 27017
+    user: username
+    pasw: password

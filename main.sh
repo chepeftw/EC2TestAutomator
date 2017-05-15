@@ -65,4 +65,7 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
 done
 
 date > /home/ubuntu/foo.txt
-echo $FOO >> /home/ubuntu/foo.txt
+echo $TS_NODES >> /home/ubuntu/foo.txt
+echo $TS_TIME >> /home/ubuntu/foo.txt
+echo $TS_CYCLES >> /home/ubuntu/foo.txt
+echo "Done!" >> /home/ubuntu/foo.txt
