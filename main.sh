@@ -50,7 +50,7 @@ fi
 COUNTER=0
 cd /home/ubuntu/tap
 while [  $COUNTER -lt $TS_CYCLES ]; do
-	echo "python main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full"
+	echo "python3 main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full"
 
 	python3 main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full
 

@@ -5,6 +5,7 @@ import sys
 import glob
 import time
 import yaml
+import argparse
 from pymongo import MongoClient
 from datetime import datetime
 
@@ -16,6 +17,13 @@ __author__ = 'chepe'
 ###############################################################################
 
 def main(args):
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("nodes", type=int,
+                        help="The number of nodes of the simulation")
+    parser.add_argument("time", type=int,
+                        help="The time of the simulation")
+    args = parser.parse_args()
 
     ###############################################################################
     # First we read all logs, collecting the important values
@@ -77,7 +85,7 @@ def main(args):
 
      
     # create dictionary and place values in dictionary
-    record = {'computation': computation, 'convergence': convergence, 'time': datetime.now()}
+    record = {'computation': computation, 'convergence': convergence, 'time': datetime.now(), 'nodes':args.ndes, 'duration':args.time}
     # insert the record
     db.insert_one(record)
      
