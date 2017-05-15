@@ -55,7 +55,7 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
 	python3 main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full
 
 	# call statistics collector
-	python3 /home/ubuntu/ec2testautomator/statsrecollector2.py3
+	python3 /home/ubuntu/ec2testautomator/statsrecollector2.py3 $TS_NODES $TS_TIME
 
 	DATENOW=$(date +"%y_%m_%d_%H_%M")
 	mkdir -p var/archive/$DATENOW
