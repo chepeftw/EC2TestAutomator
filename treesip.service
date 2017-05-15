@@ -1,9 +1,9 @@
 [Unit]
 Description="Service that gets Instance ID, then the tags in AWS and based on that runs Treesip tests"
-After=network.target
+After=docker.target
 
 [Service]
-ExecStart=bash /home/ubuntu/EC2TestAutomator/main.sh
+ExecStart=/home/ubuntu/EC2TestAutomator/main.sh
 
 [Install]
 WantedBy=default.target

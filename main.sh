@@ -84,5 +84,5 @@ echo "Done!" >> /home/ubuntu/foo.txt
 sleep 10m
 
 if [ ! -f /home/ubuntu/continue.txt ]; then
-    poweroff
+    sudo poweroff
 fi
