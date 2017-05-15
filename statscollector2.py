@@ -19,6 +19,8 @@ __author__ = 'chepe'
 def main(args):
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("name", type=str,
+                        help="The number of nodes of the simulation")
     parser.add_argument("nodes", type=int,
                         help="The number of nodes of the simulation")
     parser.add_argument("time", type=int,
@@ -85,7 +87,7 @@ def main(args):
 
      
     # create dictionary and place values in dictionary
-    record = {'computation': computation, 'convergence': convergence, 'time': datetime.now(), 'nodes':args.nodes, 'duration':args.time}
+    record = {'computation': computation, 'convergence': convergence, 'time': datetime.now(), 'name':args.name, 'nodes':args.nodes, 'duration':args.time}
     # insert the record
     db.insert_one(record)
      
