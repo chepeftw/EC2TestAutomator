@@ -1,13 +1,13 @@
 #!/usr/bin/python
 
+import argparse
+import glob
 import os
 import sys
-import glob
-import time
-import yaml
-import argparse
-from pymongo import MongoClient
 from datetime import datetime
+
+import yaml
+from pymongo import MongoClient
 
 __author__ = 'chepe'
 
@@ -17,7 +17,6 @@ __author__ = 'chepe'
 ###############################################################################
 
 def main(args):
-
     parser = argparse.ArgumentParser()
     parser.add_argument("name", type=str,
                         help="The number of nodes of the simulation")
@@ -40,21 +39,26 @@ def main(args):
     # log constants
     RESULT_STRING = " RESULT="
     CONVERGENCE_TIME_STRING = " CONVERGENCE_TIME="
+    LEVEL_STRING = " LEVEL="
 
     # variables
     computation = ""
     convergence = ""
+    level = 0
 
     # iterate for each file path in the list
     for fp in filepaths:
         # Open the file in read mode
         with open(fp, 'r') as f:
             for line in f:
-                if RESULT_STRING in line :
-                    computation = line.split( RESULT_STRING )[1].rstrip()
-                elif CONVERGENCE_TIME_STRING in line :
+                if RESULT_STRING in line:
+                    computation = line.split(RESULT_STRING)[1].rstrip()
+                elif CONVERGENCE_TIME_STRING in line:
                     convergence = line.split(CONVERGENCE_TIME_STRING)[1].rstrip()
-
+                elif LEVEL_STRING in line:
+                    levelTmp = line.split(LEVEL_STRING)[1].rstrip()
+                    if level < levelTmp:
+                        level = levelTmp
 
     ###############################################################################
     # Then we connect to MongoDB and store the values
@@ -78,19 +82,25 @@ def main(args):
         if 'pasw' in doc['parameters']:
             pasw = doc['parameters']['pasw']
 
-
-    connection = MongoClient( host, port )
-    connection.admin.authenticate( user,  pasw, mechanism='SCRAM-SHA-1' )
+    connection = MongoClient(host, port)
+    connection.admin.authenticate(user, pasw, mechanism='SCRAM-SHA-1')
 
     # connect to the treesip database and the testcases collection
     db = connection.treesip.testcases
 
-     
     # create dictionary and place values in dictionary
-    record = {'computation': int(computation), 'convergence': int(convergence), 'time': datetime.now(), 'name':args.name, 'nodes':int(args.nodes), 'duration':int(args.time)}
+    record = {
+        'computation': int(computation),
+        'level': int(level),
+        'convergence': int(convergence),
+        'time': datetime.now(),
+        'name': args.name,
+        'nodes': int(args.nodes),
+        'duration': int(args.time)
+    }
     # insert the record
     db.insert_one(record)
-     
+
     # close the connection to MongoDB
     connection.close()
 
