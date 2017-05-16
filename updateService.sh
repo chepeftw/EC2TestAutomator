@@ -1,6 +1,7 @@
 #!/bin/bash -
 
 # Update service but run it as root
+cp run.sh /home/ubuntu/
 chmod +x /home/ubuntu/EC2TestAutomator/main.sh
 chmod +x /home/ubuntu/run.sh
 cp treesip.service /etc/systemd/system/

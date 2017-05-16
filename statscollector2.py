@@ -56,7 +56,7 @@ def main(args):
                 elif CONVERGENCE_TIME_STRING in line:
                     convergence = line.split(CONVERGENCE_TIME_STRING)[1].rstrip()
                 elif LEVEL_STRING in line:
-                    levelTmp = line.split(LEVEL_STRING)[1].rstrip()
+                    levelTmp = int(line.split(LEVEL_STRING)[1].rstrip())
                     if level < levelTmp:
                         level = levelTmp
 
