@@ -34,6 +34,8 @@ def main(args):
     # First we read all logs, collecting the important values
     ###############################################################################
 
+    print("Reading log files ...")
+
     # Set folder:
     folder = "/home/ubuntu/tap/var/log/"
 
@@ -68,6 +70,7 @@ def main(args):
     # Then we connect to MongoDB and store the values
     ###############################################################################
 
+    print("Loading config.yml ...")
     with open('config.yml', 'r') as f:
         doc = yaml.load(f)
 
@@ -86,8 +89,10 @@ def main(args):
         if 'pasw' in doc['parameters']:
             pasw = doc['parameters']['pasw']
 
+    print("Connecting to mongo ...")
     connection = MongoClient(host, port)
     connection.admin.authenticate(user, pasw, mechanism='SCRAM-SHA-1')
+    print("Connected to mongo ...")
 
     # connect to the treesip database and the testcases collection
     db = connection.treesip.testcases
@@ -105,8 +110,10 @@ def main(args):
         'size': int(args.size)
     }
     # insert the record
+    print("Inserting record ...")
     db.insert_one(record)
 
+    print("Closing ...")
     # close the connection to MongoDB
     connection.close()
 
