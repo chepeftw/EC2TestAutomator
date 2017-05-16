@@ -20,7 +20,7 @@ echo "$TAGS"
 # Then we select the tag we need
 TS_NODES=$(echo "$TAGS" | grep Nodes | cut -f5)
 TS_CYCLES=$(echo "$TAGS" | grep Cycles | cut -f5)
-TS_TIME=$(echo "$TAGS" | grep Time | cut -f5)
+TS_TIME=$(echo "$TAGS" | grep Timeemu | cut -f5)
 TS_TIMEOUT=$(echo "$TAGS" | grep Timeout | cut -f5)
 TS_SIZE=$(echo "$TAGS" | grep Size | cut -f5)
 TS_NAME=$(echo "$TAGS" | grep EmulationName | cut -f5)
