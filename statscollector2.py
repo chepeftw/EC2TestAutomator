@@ -24,6 +24,10 @@ def main(args):
                         help="The number of nodes of the simulation")
     parser.add_argument("time", type=int,
                         help="The time of the simulation")
+    parser.add_argument("timeout", type=int,
+                        help="The timeout of the simulation")
+    parser.add_argument("size", type=int,
+                        help="The size of the network in the simulation")
     args = parser.parse_args()
 
     ###############################################################################
@@ -91,12 +95,14 @@ def main(args):
     # create dictionary and place values in dictionary
     record = {
         'computation': int(computation),
-        'level': int(level),
+        'maxlevel': int(level),
         'convergence': int(convergence),
-        'time': datetime.now(),
+        'created': datetime.now(),
         'name': args.name,
         'nodes': int(args.nodes),
-        'duration': int(args.time)
+        'duration': int(args.time),
+        'timeout': int(args.timeout),
+        'size': int(args.size)
     }
     # insert the record
     db.insert_one(record)

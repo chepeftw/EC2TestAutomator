@@ -21,11 +21,15 @@ echo "$TAGS"
 TS_NODES=$(echo "$TAGS" | grep Nodes | cut -f5)
 TS_CYCLES=$(echo "$TAGS" | grep Cycles | cut -f5)
 TS_TIME=$(echo "$TAGS" | grep Time | cut -f5)
+TS_TIMEOUT=$(echo "$TAGS" | grep Timeout | cut -f5)
+TS_SIZE=$(echo "$TAGS" | grep Size | cut -f5)
 TS_NAME=$(echo "$TAGS" | grep EmulationName | cut -f5)
 
 echo "Nodes $TS_NODES"
-echo "Time $TS_TIME"
 echo "Cycles $TS_CYCLES"
+echo "Time $TS_TIME"
+echo "Timeout $TS_TIMEOUT"
+echo "Size $TS_SIZE"
 echo "Name $TS_NAME"
 
 # We make sure we got the values, otherwise we abort mission
@@ -54,6 +58,16 @@ if [ -z "$TS_NAME" ]
     exit 1
 fi
 
+if [ -z "$TS_TIMEOUT" ]
+  then
+    TS_TIMEOUT="800"
+fi
+
+if [ -z "$TS_SIZE" ]
+  then
+    TS_SIZE="300"
+fi
+
 
 # We make sure we got the values, otherwise we abort mission
 COUNTER=0
@@ -63,11 +77,11 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
 	echo "python3 main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full"
 
 	#python3 main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full
-	python3 main.py -n $TS_NODES -t $TS_TIME -to 800 full
+	python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE full
 
 	# call statistics collector
 	cd /home/ubuntu/EC2TestAutomator
-	python3 statscollector2.py $TS_NAME $TS_NODES $TS_TIME
+	python3 statscollector2.py $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE
 
     cd /home/ubuntu/tap
 	DATENOW=$(date +"%y_%m_%d_%H_%M")
@@ -83,7 +97,7 @@ echo $TS_TIME >> /home/ubuntu/foo.txt
 echo $TS_CYCLES >> /home/ubuntu/foo.txt
 echo "Done!" >> /home/ubuntu/foo.txt
 
-sleep 10m
+sleep 5m
 
 if [ ! -f /home/ubuntu/continue.txt ]; then
     sudo poweroff
