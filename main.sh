@@ -71,10 +71,15 @@ fi
 
 # We make sure we got the values, otherwise we abort mission
 COUNTER=0
-cd /home/ubuntu/tap
+
 export NS3_HOME=/home/ubuntu/workspace/source/ns-3.26
 while [  $COUNTER -lt $TS_CYCLES ]; do
 	echo "python3 main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full"
+
+    cd /home/ubuntu/tap
+	DATENOW=$(date +"%y_%m_%d_%H_%M")
+	mkdir -p var/archive/$DATENOW
+	mv var/log/* var/archive/$DATENOW/
 
 	#python3 main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full
 	python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE full
@@ -82,11 +87,6 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
 	# call statistics collector
 	cd /home/ubuntu/EC2TestAutomator
 	python3 statscollector2.py $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE
-
-    cd /home/ubuntu/tap
-	DATENOW=$(date +"%y_%m_%d_%H_%M")
-	mkdir -p var/archive/$DATENOW
-	mv var/log/* var/archive/$DATENOW/
 
 	let COUNTER=COUNTER+1 
 done
