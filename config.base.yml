@@ -1,0 +1,5 @@
+parameters:
+    host: 54.186.74.114
+    port: 27017
+    user: username
+    pasw: password
