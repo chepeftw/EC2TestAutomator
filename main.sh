@@ -62,7 +62,8 @@ export NS3_HOME=/home/ubuntu/workspace/source/ns-3.26
 while [  $COUNTER -lt $TS_CYCLES ]; do
 	echo "python3 main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full"
 
-	python3 main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full
+	#python3 main.py -n $TS_NODES -t $TS_TIME --timeout 800 -o full
+	python3 main.py -n $TS_NODES -t $TS_TIME -to 800 full
 
 	# call statistics collector
 	cd /home/ubuntu/EC2TestAutomator
