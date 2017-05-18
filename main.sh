@@ -75,6 +75,8 @@ COUNTER=0
 cd /home/ubuntu/tap
 rm -rf var/archive/
 
+date > /home/ubuntu/foo.txt
+
 export NS3_HOME=/home/ubuntu/workspace/source/ns-3.26
 while [  $COUNTER -lt $TS_CYCLES ]; do
 
@@ -90,10 +92,11 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
 	echo "python3 statscollector2.py $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE"
 	python3 statscollector2.py $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE
 
-	let COUNTER=COUNTER+1 
+	let COUNTER=COUNTER+1
+	echo $COUNTER >> /home/ubuntu/foo.txt
 done
 
-date > /home/ubuntu/foo.txt
+date >> /home/ubuntu/foo.txt
 echo $TS_NODES >> /home/ubuntu/foo.txt
 echo $TS_TIME >> /home/ubuntu/foo.txt
 echo $TS_CYCLES >> /home/ubuntu/foo.txt
