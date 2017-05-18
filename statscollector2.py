@@ -46,25 +46,56 @@ def main(args):
     RESULT_STRING = " RESULT="
     CONVERGENCE_TIME_STRING = " CONVERGENCE_TIME="
     LEVEL_STRING = " LEVEL="
+    SIZE_STRING = " MESSAGE_SIZE="
+    SENT_STRING = " SENDING_MESSAGE="
+    SENT_I_STRING = " INTERNAL_MESSAGE="
+    ROUTE_STRING = " SUCCESS_ROUTE="
 
     # variables
-    computation = ""
-    convergence = ""
+    computation = 0
+    convergence = 0
+    computation2 = 0
+    convergence2 = 0
     level = 0
+    size = 0
+    sent = 0
+    internal = 0
+    routed = 0
+
+    rootNode1 = folder + "emu1/treesip.log"
+    rootNode2 = folder + "emu10/treesip.log"
+
+    with open(rootNode1, 'r') as f:
+        for line in f:
+            if RESULT_STRING in line:
+                computation = int(line.split(RESULT_STRING)[1].rstrip())
+            elif CONVERGENCE_TIME_STRING in line:
+                convergence = int(line.split(CONVERGENCE_TIME_STRING)[1].rstrip())
+
+    with open(rootNode2, 'r') as f:
+        for line in f:
+            if RESULT_STRING in line:
+                computation2 = int(line.split(RESULT_STRING)[1].rstrip())
+            elif CONVERGENCE_TIME_STRING in line:
+                convergence2 = int(line.split(CONVERGENCE_TIME_STRING)[1].rstrip())
 
     # iterate for each file path in the list
     for fp in filepaths:
         # Open the file in read mode
         with open(fp, 'r') as f:
             for line in f:
-                if RESULT_STRING in line:
-                    computation = line.split(RESULT_STRING)[1].rstrip()
-                elif CONVERGENCE_TIME_STRING in line:
-                    convergence = line.split(CONVERGENCE_TIME_STRING)[1].rstrip()
-                elif LEVEL_STRING in line:
+                if LEVEL_STRING in line:
                     levelTmp = int(line.split(LEVEL_STRING)[1].rstrip())
                     if level < levelTmp:
                         level = levelTmp
+                elif SIZE_STRING in line:
+                    size += int(line.split(SIZE_STRING)[1].rstrip())
+                elif SENT_STRING in line:
+                    sent += int(line.split(SENT_STRING)[1].rstrip())
+                elif SENT_I_STRING in line:
+                    internal += int(line.split(SENT_I_STRING)[1].rstrip())
+                elif ROUTE_STRING in line:
+                    routed += int(line.split(ROUTE_STRING)[1].rstrip())
 
     ###############################################################################
     # Then we connect to MongoDB and store the values
@@ -100,14 +131,23 @@ def main(args):
     # create dictionary and place values in dictionary
     record = {
         'computation': int(computation),
-        'maxlevel': int(level),
         'convergence': int(convergence),
-        'created': datetime.now(),
+        'computation2': int(computation2),
+        'convergence2': int(convergence2),
+        'maxlevel': int(level),
+
         'name': args.name,
         'nodes': int(args.nodes),
         'duration': int(args.time),
         'timeout': int(args.timeout),
-        'size': int(args.size)
+        'size': int(args.size),
+
+        'msg_size': int(size),
+        'msg_sent': int(sent),
+        'msg_internal': int(internal),
+        'msg_routed': int(routed),
+
+        'created': datetime.now(),
     }
     # insert the record
     print("Inserting record ...")
