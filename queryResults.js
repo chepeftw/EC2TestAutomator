@@ -10,8 +10,8 @@ db.testcases.aggregate(
            avgQuantity: { $avg: "$convergence" },
            avgComputations: { $avg: "$computation" },
            timeout: { $avg: "$timeout" },
-           acuracy: { $avg: { $divide: [ "$computation", "$nodes" ] }},
-           countNum: { $sum: 1 }
+           accuracy: { $avg: { $divide: [ "$computation", "$nodes" ] }},
+           runs: { $sum: 1 }
          }
      },
      { $sort: { acuracy: -1 } }
