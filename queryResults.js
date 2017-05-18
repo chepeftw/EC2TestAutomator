@@ -1,6 +1,6 @@
 db.testcases.aggregate(
    [
-    { $match: { computation: { $type: "int" }, nodes: { $type: "int" } } },
+    { $match: { name: { $regex: /Tmout_*/, $options: "si" }, computation: { $type: "int" }, nodes: { $type: "int" } } },
      {
        $group:
          {
@@ -14,6 +14,6 @@ db.testcases.aggregate(
            runs: { $sum: 1 }
          }
      },
-     { $sort: { acuracy: -1 } }
+     { $sort: { accuracy: -1 } }
    ]
 )
