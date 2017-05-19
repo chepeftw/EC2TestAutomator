@@ -11,7 +11,7 @@ Timeout="$7"
 Speed="$8"
 Pause="$9"
 
-AMI_MULTI="ami-44f19724"
+AMI_MULTI="ami-6bc7a10b"
 ITYPE="t2.micro"
 
 case "$Nodes" in
