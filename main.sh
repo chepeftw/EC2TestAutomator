@@ -105,7 +105,7 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
 
 	cd /home/ubuntu/EC2TestAutomator
 	echo "python3 statscollector2.py -ns $TS_SPEED -np $TS_PAUSE $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE"
-	python3 statscollector2.py $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE
+	python3 statscollector2.py -ns $TS_SPEED -np $TS_PAUSE $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE
 
 	let COUNTER=COUNTER+1
 	echo $COUNTER >> /home/ubuntu/foo.txt
