@@ -1,5 +1,12 @@
 #!/bin/bash -
 
+# Log Location on Server.
+LOG_LOCATION=/home/ubuntu/logs
+exec > >(tee -i $LOG_LOCATION/MylogFile.log)
+exec 2>&1
+
+echo "Log Location should be: [ $LOG_LOCATION ]"
+
 # Make the script to run at boot time
 # chmod +x /home/ubuntu/EC2TestAutomator/main.sh
 # sudo cp treesip.service /etc/systemd/system/
