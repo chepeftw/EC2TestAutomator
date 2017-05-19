@@ -75,8 +75,8 @@ def main(args):
     if args.nodepause:
         nodePause = int(args.nodepause)
 
-    rootNode1 = folder + "emu1/treesip.log"
-    rootNode2 = folder + "emu10/treesip.log"
+    rootNode1 = folder + "emu1/treesip10001.log"
+    rootNode2 = folder + "emu10/treesip10002.log"
 
     with open(rootNode1, 'r') as f:
         for line in f:
