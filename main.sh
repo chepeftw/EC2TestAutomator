@@ -117,8 +117,8 @@ echo $TS_TIME >> /home/ubuntu/foo.txt
 echo $TS_CYCLES >> /home/ubuntu/foo.txt
 echo "Done!" >> /home/ubuntu/foo.txt
 
-sleep 5m
+sleep 1m
 
 if [ ! -f /home/ubuntu/continue.txt ]; then
-    sudo poweroff
+    poweroff
 fi
