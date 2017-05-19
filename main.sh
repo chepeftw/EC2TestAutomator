@@ -1,11 +1,17 @@
-#!/bin/bash -
+#!/usr/bin/env bash
 
-# Log Location on Server.
-LOG_LOCATION=/home/ubuntu/logs
-exec > >(tee -i $LOG_LOCATION/MylogFile.log)
+# Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
+exec > >(tee -i logfile.txt)
+
+# Without this, only stdout would be captured - i.e. your
+# log file would not contain any error messages.
+# SEE (and upvote) the answer by Adam Spiers, which keeps STDERR
+# as a separate stream - I did not want to steal from him by simply
+# adding his answer to mine.
 exec 2>&1
 
-echo "Log Location should be: [ $LOG_LOCATION ]"
+echo "foo"
+echo "bar" >&2
 
 # Make the script to run at boot time
 # chmod +x /home/ubuntu/EC2TestAutomator/main.sh
@@ -126,6 +132,7 @@ echo $TS_TIME >> /home/ubuntu/foo.txt
 echo $TS_CYCLES >> /home/ubuntu/foo.txt
 echo "Done!" >> /home/ubuntu/foo.txt
 
+echo "Waiting to complete ..."
 sleep 1m
 
 if [ ! -f /home/ubuntu/continue.txt ]; then
