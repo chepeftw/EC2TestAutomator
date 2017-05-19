@@ -10,7 +10,6 @@ Timeemu="$6"
 Timeout="$7"
 
 AMI_SINGLE="ami-5b43253b"
-AMI_MULTIN="ami-994026f9"
 
 aws ec2 run-instances \
 	--image-id $AMI_SINGLE \
