@@ -28,7 +28,13 @@ def main(args):
                         help="The timeout of the simulation")
     parser.add_argument("size", type=int,
                         help="The size of the network in the simulation")
+    parser.add_argument("-ns", "--nodespeed", action="store",
+                        help="The speed of the nodes expressed in m/s")
+    parser.add_argument("-np", "--nodepause", action="store",
+                        help="The pause of the nodes expressed in s")
     args = parser.parse_args()
+
+
 
     ###############################################################################
     # First we read all logs, collecting the important values
@@ -61,6 +67,13 @@ def main(args):
     sent = 0
     internal = 0
     routed = 0
+
+    nodeSpeed = 0
+    nodePause = 0
+    if args.nodespeed:
+        nodeSpeed = args.nodespeed
+    if args.nodepause:
+        nodePause = args.nodepause
 
     rootNode1 = folder + "emu1/treesip.log"
     rootNode2 = folder + "emu10/treesip.log"
@@ -141,6 +154,8 @@ def main(args):
         'duration': int(args.time),
         'timeout': int(args.timeout),
         'size': int(args.size),
+        'node_speed': int(nodeSpeed),
+        'node_pause': int(nodePause),
 
         'msg_size': int(size),
         'msg_sent': int(sent),

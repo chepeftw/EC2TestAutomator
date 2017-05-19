@@ -24,12 +24,16 @@ TS_TIME=$(echo "$TAGS" | grep Timeemu | cut -f5)
 TS_TIMEOUT=$(echo "$TAGS" | grep Timeout | cut -f5)
 TS_SIZE=$(echo "$TAGS" | grep Size | cut -f5)
 TS_NAME=$(echo "$TAGS" | grep EmulationName | cut -f5)
+TS_SPEED=$(echo "$TAGS" | grep Speed | cut -f5)
+TS_PAUSE=$(echo "$TAGS" | grep Pause | cut -f5)
 
 echo "Nodes $TS_NODES"
 echo "Cycles $TS_CYCLES"
 echo "Time $TS_TIME"
 echo "Timeout $TS_TIMEOUT"
 echo "Size $TS_SIZE"
+echo "Speed $TS_SPEED"
+echo "Pause $TS_PAUSE"
 echo "Name $TS_NAME"
 
 # We make sure we got the values, otherwise we abort mission
@@ -60,12 +64,22 @@ fi
 
 if [ -z "$TS_TIMEOUT" ]
   then
-    TS_TIMEOUT="800"
+    TS_TIMEOUT="200"
 fi
 
 if [ -z "$TS_SIZE" ]
   then
     TS_SIZE="300"
+fi
+
+if [ -z "$TS_SPEED" ]
+  then
+    TS_SPEED="5"
+fi
+
+if [ -z "$TS_PAUSE" ]
+  then
+    TS_PAUSE="1"
 fi
 
 
@@ -86,10 +100,10 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
 	mv var/log/* var/archive/$DATENOW/
 
 	echo "python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE full"
-	python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE full
+	python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE full
 
 	cd /home/ubuntu/EC2TestAutomator
-	echo "python3 statscollector2.py $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE"
+	echo "python3 statscollector2.py -ns $TS_SPEED -np $TS_PAUSE $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE"
 	python3 statscollector2.py $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE
 
 	let COUNTER=COUNTER+1
