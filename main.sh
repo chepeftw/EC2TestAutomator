@@ -88,6 +88,7 @@ COUNTER=0
 
 cd /home/ubuntu/tap
 rm -rf var/archive/
+python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER destroy
 
 date > /home/ubuntu/foo.txt
 
