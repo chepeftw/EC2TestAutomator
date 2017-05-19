@@ -11,7 +11,7 @@ Timeout="$7"
 Speed="$8"
 Pause="$9"
 
-AMI_MULTI="ami-c3f197a3"
+AMI_MULTI="ami-44f19724"
 ITYPE="t2.micro"
 
 case "$Nodes" in
@@ -49,6 +49,7 @@ COUNTER=1
 while [  $COUNTER -lt 6 ]; do
     let SPEED=COUNTER*2
     # awsTreesip Name EmulationName Cycles Nodes Size TimeEmu Timeout Speed Pause InstanceType
+#    awsTreesip TreesipMulti TestMultiN_20_$SPEED 200 20 300 45 200 $SPEED 0
     awsTreesip TreesipMulti MultiN_20_$SPEED 200 20 300 45 200 $SPEED 0
     awsTreesip TreesipMulti MultiN_30_$SPEED 200 30 350 55 200 $SPEED 0
     awsTreesip TreesipMulti MultiN_40_$SPEED 200 40 400 65 200 $SPEED 0

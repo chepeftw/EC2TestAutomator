@@ -1,6 +1,6 @@
 db.testcases.aggregate(
    [
-    { $match: { name: { $regex: /MultiN_*/, $options: "si" }, computation: { $type: "int" }, nodes: { $type: "int" } } },
+    { $match: { name: { $regex: /TestMultiN_*/, $options: "si" }, computation: { $type: "int" }, nodes: { $type: "int" } } },
      {
        $group:
          {

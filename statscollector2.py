@@ -71,9 +71,9 @@ def main(args):
     nodeSpeed = 0
     nodePause = 0
     if args.nodespeed:
-        nodeSpeed = args.nodespeed
+        nodeSpeed = int(args.nodespeed)
     if args.nodepause:
-        nodePause = args.nodepause
+        nodePause = int(args.nodepause)
 
     rootNode1 = folder + "emu1/treesip.log"
     rootNode2 = folder + "emu10/treesip.log"
