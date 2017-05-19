@@ -100,7 +100,7 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
 	mkdir -p var/archive/$DATENOW
 	mv var/log/* var/archive/$DATENOW/
 
-	echo "python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE full"
+	echo "python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER full"
 	python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER full
 
 	cd /home/ubuntu/EC2TestAutomator
