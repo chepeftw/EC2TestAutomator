@@ -13,6 +13,9 @@ exec 2>&1
 echo "foo"
 echo "bar" >&2
 
+echo "Waiting to start ... hi :) ..."
+sleep 2m
+
 # Make the script to run at boot time
 # chmod +x /home/ubuntu/EC2TestAutomator/main.sh
 # sudo cp treesip.service /etc/systemd/system/
@@ -101,7 +104,7 @@ COUNTER=0
 
 cd /home/ubuntu/tap
 rm -rf var/archive/
-python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER destroy
+#python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER destroy
 
 date > /home/ubuntu/foo.txt
 
@@ -133,7 +136,7 @@ echo $TS_CYCLES >> /home/ubuntu/foo.txt
 echo "Done!" >> /home/ubuntu/foo.txt
 
 echo "Waiting to complete ..."
-sleep 1m
+sleep 2m
 
 if [ ! -f /home/ubuntu/continue.txt ]; then
     poweroff
