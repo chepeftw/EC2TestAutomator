@@ -14,7 +14,7 @@ echo "foo"
 echo "bar" >&2
 
 echo "Waiting to start ... hi :) ..."
-#sleep 2m
+sleep 2m
 
 # Make the script to run at boot time
 # chmod +x /home/ubuntu/EC2TestAutomator/main.sh
