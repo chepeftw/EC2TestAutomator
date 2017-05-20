@@ -146,8 +146,8 @@ YEAR=$(date '+%Y')
 
 export PATH=/home/ubuntu/.local/bin/:$PATH
 
-cp logfile.txt $TS_NAME.log
-aws s3 cp $TS_NAME.log s3://treesip/$YEAR/$MONTH/$DAY/$TS_NAME/
+cp /home/ubuntu/EC2TestAutomator/logfile.txt /home/ubuntu/$TS_NAME.log
+aws s3 cp /home/ubuntu/$TS_NAME.log s3://treesip/$YEAR/$MONTH/$DAY/$TS_NAME/
 
 echo "Waiting to complete ..."
 sleep 2m

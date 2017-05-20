@@ -47,32 +47,34 @@ aws ec2 run-instances \
 # awsTreesip TreesipMulti3 MultiN3_2_70_2 50 70 550 95 200 2 0
 # awsTreesip TreesipMulti3 MultiN3_2_70_3 50 70 500 95 200 2 0
 
-awsTreesip TreesipMulti7 MultiN7_50_2 200 50 450 130 800 2 0
+# awsTreesip TreesipMulti7 MultiN7_50_2 200 50 450 130 800 2 0
 
-# Timeout Test for 20 nodes
-#COUNTER=1
-#TOUT=800
-#CCLES=200
-#while [  $COUNTER -lt 6 ]; do
-#    NODESN=20
-#    SIZEN=300
-#    let SPEED=COUNTER*2
-#    while [  $NODESN -lt 70 ]; do
-#        let TIMEEMU=NODESN*2
-#        let TIMEEMU=TIMEEMU+30
-#            EMUNAME="MultiN7_"$NODESN"_"$SPEED
-#            # awsTreesip Name EmulationName Cycles Nodes Size TimeEmu Timeout Speed Pause InstanceType
-#            CMD="awsTreesip TreesipMulti7 $EMUNAME $CCLES $NODESN $SIZEN $TIMEEMU $TOUT $SPEED 0"
-#            echo $CMD
-#            $CMD
-#
-#        let NODESN=NODESN+10
-#        let SIZEN=SIZEN+50
-#    done
-#	let COUNTER=COUNTER+1
-#done
+ Timeout Test for 20 nodes
+COUNTER=1
+TOUT=600
+CCLES=100
+while [  $COUNTER -lt 6 ]; do
+    NODESN=20
+    SIZEN=300
+    let SPEED=COUNTER*2
+    while [  $NODESN -lt 60 ]; do
+        let TIMEEMU=NODESN*2
+        let TIMEEMU=TIMEEMU+30
+            EMUNAME="MultiN8_"$NODESN"_"$SPEED
+            # awsTreesip Name EmulationName Cycles Nodes Size TimeEmu Timeout Speed Pause InstanceType
+            CMD="awsTreesip TreesipMulti8 $EMUNAME $CCLES $NODESN $SIZEN $TIMEEMU $TOUT $SPEED 0"
+            echo $CMD
+            $CMD
+
+        let NODESN=NODESN+10
+        let SIZEN=SIZEN+50
+    done
+	let COUNTER=COUNTER+1
+done
 
 
 # MultiN7_ - I fixed the sync problem by setting in the main.py to 2*1 times the nodes number, and the total emu time for
 #               NS3 is 2 times nodes number plus 30, there should be a MUCH BETTER way of syncing the instances
 #               but for now that should do it, before this tests the simulations could be questionable I guess
+
+# MultiN8_ - I will centralize logs now to check if something fails.
