@@ -14,6 +14,7 @@ echo "foo"
 echo "bar" >&2
 
 echo "Waiting to start ... hi :) ..."
+rm -rf /home/ubuntu/continue.txt /home/ubuntu/stop.txt
 sleep 2m
 
 # Make the script to run at boot time
