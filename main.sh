@@ -144,6 +144,8 @@ DAY=$(date '+%d')
 MONTH=$(date '+%m')
 YEAR=$(date '+%Y')
 
+export PATH=/home/ubuntu/.local/bin/aws:$PATH
+
 cp logfile.txt $TS_NAME.log
 aws s3 cp $TS_NAME.log s3://treesip/$YEAR/$MONTH/$DAY/$TS_NAME/
 
