@@ -140,6 +140,13 @@ echo $TS_TIME >> /home/ubuntu/foo.txt
 echo $TS_CYCLES >> /home/ubuntu/foo.txt
 echo "Done!" >> /home/ubuntu/foo.txt
 
+DAY=$(date '+%d')
+MONTH=$(date '+%m')
+YEAR=$(date '+%Y')
+
+cp logfile.txt $TS_NAME.log
+aws s3 cp $TS_NAME.log s3://treesip/$YEAR/$MONTH/$DAY/$TS_NAME/
+
 echo "Waiting to complete ..."
 sleep 2m
 
