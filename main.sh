@@ -114,6 +114,10 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
     if [ ! -f /home/ubuntu/stop.txt ]; then
         cd /home/ubuntu/tap
         DATENOW=$(date +"%y_%m_%d_%H_%M")
+        echo "---------------------------"
+        echo $DATENOW
+        echo "var/archive/$DATENOW"
+        echo "---------------------------"
         mkdir -p var/archive/$DATENOW
         mv var/log/* var/archive/$DATENOW/
 
