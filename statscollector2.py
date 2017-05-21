@@ -175,7 +175,7 @@ def main(args):
     print("Inserting record ...")
 
     for x in record.keys():
-        print(x + " => " + record[x])
+        print("{0} => {1}".format(x, record[x]))
 
     db.insert_one(record)
 
