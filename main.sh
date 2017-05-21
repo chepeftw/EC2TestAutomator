@@ -153,5 +153,8 @@ echo "Waiting to complete ..."
 sleep 2m
 
 if [ ! -f /home/ubuntu/continue.txt ]; then
+    echo "POWEROFF ..."
     poweroff
+else
+    echo "NOT POWEROFF ..."
 fi
