@@ -11,7 +11,7 @@ Timeout="$7"
 Speed="$8"
 Pause="$9"
 
-AMI_SINGLE="ami-22563742"
+AMI_MULTI="ami-22533242"
 ITYPE="t2.small"
 
 case "$Nodes" in
@@ -32,7 +32,7 @@ case "$Nodes" in
 esac
 
 aws ec2 run-instances \
-	--image-id $AMI_SINGLE \
+	--image-id $AMI_MULTI \
 	--count 1 \
 	--instance-type $ITYPE \
 	--key-name SelfieServerv2 \
@@ -44,6 +44,11 @@ aws ec2 run-instances \
 	"ResourceType=instance,Tags=[{Key=Name,Value=$Name},{Key=EmulationName,Value=$EmulationName},{Key=Cycles,Value=$Cycles},{Key=Nodes,Value=$Nodes},{Key=Size,Value=$Size},{Key=Timeemu,Value=$Timeemu},{Key=Timeout,Value=$Timeout},{Key=Speed,Value=$Speed},{Key=Pause,Value=$Pause}]"
 }
 
+# awsTreesip TreesipMulti3 MultiN3_2_70_2 50 70 550 95 200 2 0
+# awsTreesip TreesipMulti3 MultiN3_2_70_3 50 70 500 95 200 2 0
+
+# awsTreesip TreesipMulti7 MultiN7_50_2 200 50 450 130 800 2 0
+
 # Timeout Test for 20 nodes
 COUNTER=1
 TOUT=600
@@ -52,10 +57,10 @@ while [  $COUNTER -lt 6 ]; do
     NODESN=20
     SIZEN=300
     let SPEED=COUNTER*2
-    while [  $NODESN -lt 70 ]; do
+    while [  $NODESN -lt 60 ]; do
         let TIMEEMU=NODESN*2
         let TIMEEMU=TIMEEMU+30
-            EMUNAME="SimpleN1_"$NODESN"_"$SPEED
+            EMUNAME="MultiN10_"$NODESN"_"$SPEED
             # awsTreesip Name EmulationName Cycles Nodes Size TimeEmu Timeout Speed Pause InstanceType
             CMD="awsTreesip Treesip$EMUNAME $EMUNAME $CCLES $NODESN $SIZEN $TIMEEMU $TOUT $SPEED 0"
             echo $CMD
@@ -67,5 +72,13 @@ while [  $COUNTER -lt 6 ]; do
 	let COUNTER=COUNTER+1
 done
 
-# SingleN1_ - First run using the simple AMI, I just commented the extra root node code.
-#               This will help me to compare with the multinode.
+
+# MultiN7_ - I fixed the sync problem by setting in the main.py to 2*1 times the nodes number, and the total emu time for
+#               NS3 is 2 times nodes number plus 30, there should be a MUCH BETTER way of syncing the instances
+#               but for now that should do it, before this tests the simulations could be questionable I guess
+
+# MultiN8_ - I will centralize logs now to check if something fails.
+
+# MultiN9_ - I found the problem, for some reason at some point docker fucked up the stoping and removing of
+#               containers, therefore it couldn't continue, so I added a sleep so "it haves time" to chill
+#               and then two extra commands to stop and rm all.
