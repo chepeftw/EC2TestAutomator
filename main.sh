@@ -15,7 +15,11 @@ echo "bar" >&2
 
 echo "Waiting to start ... hi :) ..."
 rm -rf /home/ubuntu/continue.txt /home/ubuntu/stop.txt
+
 sleep 2m
+
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
 
 # Make the script to run at boot time
 # chmod +x /home/ubuntu/EC2TestAutomator/main.sh

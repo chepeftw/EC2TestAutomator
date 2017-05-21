@@ -5,6 +5,7 @@ import glob
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
 
 import yaml
 from pymongo import MongoClient
@@ -78,19 +79,25 @@ def main(args):
     rootNode1 = folder + "emu1/treesip10001.log"
     rootNode2 = folder + "emu10/treesip10002.log"
 
-    with open(rootNode1, 'r') as f:
-        for line in f:
-            if RESULT_STRING in line:
-                computation = int(line.split(RESULT_STRING)[1].rstrip())
-            elif CONVERGENCE_TIME_STRING in line:
-                convergence = int(line.split(CONVERGENCE_TIME_STRING)[1].rstrip())
+    node1Path = Path(rootNode1)
+    if node1Path.is_file():
+        with open(rootNode1, 'r') as f:
+            for line in f:
+                if RESULT_STRING in line:
+                    computation = int(line.split(RESULT_STRING)[1].rstrip())
+                elif CONVERGENCE_TIME_STRING in line:
+                    convergence = int(line.split(CONVERGENCE_TIME_STRING)[1].rstrip())
 
-    with open(rootNode2, 'r') as f:
-        for line in f:
-            if RESULT_STRING in line:
-                computation2 = int(line.split(RESULT_STRING)[1].rstrip())
-            elif CONVERGENCE_TIME_STRING in line:
-                convergence2 = int(line.split(CONVERGENCE_TIME_STRING)[1].rstrip())
+
+    node2Path = Path(rootNode2)
+    if node2Path.is_file():
+        with open(rootNode2, 'r') as f:
+            for line in f:
+                if RESULT_STRING in line:
+                    computation2 = int(line.split(RESULT_STRING)[1].rstrip())
+                elif CONVERGENCE_TIME_STRING in line:
+                    convergence2 = int(line.split(CONVERGENCE_TIME_STRING)[1].rstrip())
+
 
     # iterate for each file path in the list
     for fp in filepaths:
