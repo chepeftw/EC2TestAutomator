@@ -7,8 +7,6 @@ db.testcases.aggregate(
            _id: "$name",
            avgConvergence: { $avg: "$convergence" },
            avgComputations: { $avg: "$computation" },
-           avgConvergence2: { $avg: "$convergence2" },
-           avgComputations2: { $avg: "$computation2" },
            nodes: { $avg: "$nodes" },
            timeout: { $avg: "$timeout" },
            speed: { $avg: "$node_speed" },
