@@ -11,7 +11,7 @@ Timeout="$7"
 Speed="$8"
 Pause="$9"
 
-AMI_MULTI="ami-10157470"
+AMI_MULTI="ami-22533242"
 ITYPE="t2.small"
 
 case "$Nodes" in
@@ -19,7 +19,7 @@ case "$Nodes" in
    ;;
 "50") ITYPE="t2.medium"
    ;;
-"60") ITYPE="t2.medium"
+"60") ITYPE="t2.large"
     ;;
 "70") ITYPE="t2.large"
     ;;
@@ -49,7 +49,7 @@ aws ec2 run-instances \
 
 # awsTreesip TreesipMulti7 MultiN7_50_2 200 50 450 130 800 2 0
 
- Timeout Test for 20 nodes
+# Timeout Test for 20 nodes
 COUNTER=1
 TOUT=600
 CCLES=100
@@ -57,12 +57,12 @@ while [  $COUNTER -lt 6 ]; do
     NODESN=20
     SIZEN=300
     let SPEED=COUNTER*2
-    while [  $NODESN -lt 60 ]; do
+    while [  $NODESN -lt 70 ]; do
         let TIMEEMU=NODESN*2
         let TIMEEMU=TIMEEMU+30
-            EMUNAME="MultiN8_"$NODESN"_"$SPEED
+            EMUNAME="MultiN10_"$NODESN"_"$SPEED
             # awsTreesip Name EmulationName Cycles Nodes Size TimeEmu Timeout Speed Pause InstanceType
-            CMD="awsTreesip TreesipMulti8 $EMUNAME $CCLES $NODESN $SIZEN $TIMEEMU $TOUT $SPEED 0"
+            CMD="awsTreesip Treesip$EMUNAME $EMUNAME $CCLES $NODESN $SIZEN $TIMEEMU $TOUT $SPEED 0"
             echo $CMD
             $CMD
 
@@ -78,3 +78,7 @@ done
 #               but for now that should do it, before this tests the simulations could be questionable I guess
 
 # MultiN8_ - I will centralize logs now to check if something fails.
+
+# MultiN9_ - I found the problem, for some reason at some point docker fucked up the stoping and removing of
+#               containers, therefore it couldn't continue, so I added a sleep so "it haves time" to chill
+#               and then two extra commands to stop and rm all.

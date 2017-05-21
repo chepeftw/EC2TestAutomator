@@ -166,6 +166,10 @@ def main(args):
     }
     # insert the record
     print("Inserting record ...")
+
+    for x in record.keys():
+        print(x + " => " + record[x])
+
     db.insert_one(record)
 
     print("Closing ...")
