@@ -151,6 +151,7 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
 	echo $COUNTER >> /home/ubuntu/foo.txt
 done
 
+cd /home/ubuntu/tap
 CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER destroy"
 echo $CMD
 $CMD

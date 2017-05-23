@@ -168,28 +168,8 @@ def create():
     #############################
     ## First and a half ... we generate the configuration yaml files.
 
-    ## syncConfigTime (s) = seconds + ~seconds
-    syncConfigTime = int(time.time()) + (numberOfNodes * 2.2)
-
-    config1 = {
-        'target': syncConfigTime,
-        'nodes': numberOfNodes,
-        'timeout': int(timeoutStr),
-        'rootnode': 0,
-        'port': 10001
-    }
-    with open('conf/conf1.yml', 'w') as yaml_file:
-        yaml.dump(config1, yaml_file, default_flow_style=False)
-
-    config2 = {
-        'target': syncConfigTime + 1,
-        'nodes': numberOfNodes,
-        'timeout': int(timeoutStr),
-        'rootnode': 0,
-        'port': 10002
-    }
-    with open('conf/conf2.yml', 'w') as yaml_file:
-        yaml.dump(config2, yaml_file, default_flow_style=False)
+    writeConf(0, numberOfNodes, timeoutStr, 0, 10001, "conf1.yml")
+    writeConf(0, numberOfNodes, timeoutStr, 0, 10002, "conf2.yml")
 
     #############################
     ## Second, we run the numberOfNodes of containers.
@@ -338,25 +318,8 @@ def runSim():
         ## syncConfigTime (s) = seconds + ~seconds
         syncConfigTime = int(time.time()) + 35
 
-        config1 = {
-            'target': syncConfigTime,
-            'nodes': numberOfNodes,
-            'timeout': int(timeoutStr),
-            'rootnode': 1,
-            'port': 10001
-        }
-        with open('conf1.yml', 'w') as yaml_file:
-            yaml.dump(config1, yaml_file, default_flow_style=False)
-
-        config2 = {
-            'target': syncConfigTime + 1,
-            'nodes': numberOfNodes,
-            'timeout': int(timeoutStr),
-            'rootnode': 10,
-            'port': 10002
-        }
-        with open('conf2.yml', 'w') as yaml_file:
-            yaml.dump(config2, yaml_file, default_flow_style=False)
+        writeConf( syncConfigTime, numberOfNodes, timeoutStr, 1, 10001, "conf1.yml")
+        writeConf( syncConfigTime + 1, numberOfNodes, timeoutStr, 10, 10002, "conf2.yml")
 
         containerNameList = ""
         for x in range(0, numberOfNodes):
@@ -390,6 +353,18 @@ def runSim():
 
     return
 
+
+def writeConf( target, nodes, timeout, root, port, filename):
+    config = {
+        'target': target,
+        'nodes': nodes,
+        'timeout': int(timeout),
+        'rootnode': root,
+        'port': port
+    }
+    filename = "conf/" + filename
+    with open( filename, 'w') as yaml_file:
+        yaml.dump(config, yaml_file, default_flow_style=False)
 
 ################################################################################
 ################################################################################
