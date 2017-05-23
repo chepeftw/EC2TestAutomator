@@ -117,11 +117,11 @@ export NS3_HOME=/home/ubuntu/workspace/source/ns-3.26
 
 CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER create"
 echo $CMD
-#$CMD
+$CMD
 
 CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER ns3"
 echo $CMD
-#$CMD
+$CMD
 
 while [  $COUNTER -lt $TS_CYCLES ]; do
 
@@ -137,14 +137,14 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
 
         CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER simulation"
         echo $CMD
-        #$CMD
+        $CMD
 
         sleep 1m
 
         cd /home/ubuntu/EC2TestAutomator
         CMD2="python3 statscollector2.py -ns $TS_SPEED -np $TS_PAUSE $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE"
         echo $CMD2
-        #$CMD2
+        $CMD2
     fi
 
 	let COUNTER=COUNTER+1
@@ -153,7 +153,7 @@ done
 
 CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER destroy"
 echo $CMD
-#$CMD
+$CMD
 
 date >> /home/ubuntu/foo.txt
 echo $TS_NODES >> /home/ubuntu/foo.txt

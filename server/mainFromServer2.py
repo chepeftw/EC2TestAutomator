@@ -31,6 +31,7 @@ logsDirectory = "./var/log/"
 
 
 def main(args):
+    global numberOfNodesStr, emulationTimeStr, timeoutStr, nodeSpeed, nodePause, simulationCount, scenarioSize, numberOfNodes, nameList
     print("Main ...")
 
     ###############################
@@ -52,6 +53,8 @@ def main(args):
                         help="The speed of the nodes expressed in m/s")
     parser.add_argument("-np", "--nodepause", action="store",
                         help="The pause of the nodes expressed in s")
+    parser.add_argument("-c", "--count", action="store",
+                        help="The count of simulations")
     parser.add_argument('-v', '--version', action='version', version='%(prog)s 2.0')
     args = parser.parse_args()
 
@@ -111,7 +114,7 @@ def checkReturnCode(rCode, str):
         return
 
     print("Error: %s" % (str))
-    destroy()  ## Adding this in case something goes wrong, at least we do some cleanup
+    # destroy()  ## Adding this in case something goes wrong, at least we do some cleanup
     sys.exit(2)
     return
 
@@ -136,7 +139,10 @@ def create():
     #############################
     ## First we make sure we are running the latest version of our Ubuntu container
 
-    r_code = subprocess.call("docker build -t %s docker/myubuntu/." % (baseContainerName1), shell=True)
+    # docker build -t myubuntu docker/myubuntu/.
+
+    r_code = subprocess.call("docker build -t %s docker/mybase/." % (baseContainerName0), shell=True)
+    r_code = subprocess.call("docker build --no-cache=true -t %s docker/myubuntu/." % (baseContainerName1), shell=True)
     checkReturnCode(r_code, "Building regular container %s" % (baseContainerName1))
 
     r_code = subprocess.call("cd ns3 && bash update.sh tap-wifi-virtual-machine.cc", shell=True)
@@ -145,13 +151,13 @@ def create():
     else:
         print("NS3 up to date!")
         print("Go to NS3 folder, probably cd $NS3_HOME")
-        print("Run sudo ./waf --run \"scratch/tap-vm --NumNodes=%s --TotalTime=%s --TapBaseName=emu\"" % (
+        print("Run ./waf --run \"scratch/tap-vm --NumNodes=%s --TotalTime=%s --TapBaseName=emu\"" % (
             numberOfNodesStr, emulationTimeStr))
         print(
-            "or run sudo ./waf --run \"scratch/tap-vm --NumNodes=%s --TotalTime=%s --TapBaseName=emu --SizeX=100 --SizeY=100\"" % (
+            "or run ./waf --run \"scratch/tap-vm --NumNodes=%s --TotalTime=%s --TapBaseName=emu --SizeX=100 --SizeY=100\"" % (
                 numberOfNodesStr, emulationTimeStr))
 
-    r_code = subprocess.call("cd $NS3_HOME && sudo ./waf build", shell=True)
+    r_code = subprocess.call("cd $NS3_HOME && ./waf build", shell=True)
     if r_code == 0:
         print("NS3 BUILD WIN!")
     else:
@@ -169,20 +175,20 @@ def create():
         'target': syncConfigTime,
         'nodes': numberOfNodes,
         'timeout': int(timeoutStr),
-        'rootnode': 1,
+        'rootnode': 0,
         'port': 10001
     }
-    with open('conf1.yml', 'w') as yaml_file:
+    with open('conf/conf1.yml', 'w') as yaml_file:
         yaml.dump(config1, yaml_file, default_flow_style=False)
 
     config2 = {
         'target': syncConfigTime + 1,
         'nodes': numberOfNodes,
         'timeout': int(timeoutStr),
-        'rootnode': 10,
+        'rootnode': 0,
         'port': 10002
     }
-    with open('conf2.yml', 'w') as yaml_file:
+    with open('conf/conf2.yml', 'w') as yaml_file:
         yaml.dump(config2, yaml_file, default_flow_style=False)
 
     #############################
@@ -205,12 +211,13 @@ def create():
         if not os.path.exists(logsDirectory + nameList[x]):
             os.makedirs(logsDirectory + nameList[x])
 
-        logHostPath = dir_path + logsDirectory[1:] + nameList[
-            x]  ## "." are not allowed in the -v of docker and it just work with absolute paths
+        logHostPath = dir_path + logsDirectory[1:] + nameList[x]  ## "." are not allowed in the -v of docker and it just work with absolute paths
+        confHostPath = dir_path + "/conf"
 
         volumes = "-v " + logHostPath + ":/var/log/golang "
-        volumes += "-v conf1.yml:/treesip/conf1.yml "
-        volumes += "-v conf2.yml:/treesip/conf2.yml "
+        volumes += "-v " + confHostPath + ":/treesip "
+
+        print( "VOLUMES: " + volumes )
 
         acc_status += subprocess.call(
             "docker run --privileged -dit --net=none %s --name %s %s" % (volumes, nameList[x], baseContainerName1),
@@ -228,11 +235,11 @@ def create():
     ## But in the source you can find more examples in the same dir.
     acc_status = 0
     for x in range(0, numberOfNodes):
-        acc_status += subprocess.call("sudo bash net/singleSetup.sh %s" % (nameList[x]), shell=True)
+        acc_status += subprocess.call("bash net/singleSetup.sh %s" % (nameList[x]), shell=True)
 
     checkReturnCode(acc_status, "Creating bridge and tap interface")
 
-    acc_status += subprocess.call("sudo bash net/singleEndSetup.sh", shell=True)
+    acc_status += subprocess.call("bash net/singleEndSetup.sh", shell=True)
     checkReturnCode(acc_status, "Finalizing bridges and tap interfaces")
 
     if not os.path.exists(pidsDirectory):
@@ -254,7 +261,7 @@ def create():
         with open(pidsDirectory + nameList[x], "w") as text_file:
             text_file.write(str(pid, 'utf-8'))
 
-        acc_status += subprocess.call("sudo bash net/container.sh %s %s" % (nameList[x], x), shell=True)
+        acc_status += subprocess.call("bash net/container.sh %s %s" % (nameList[x], x), shell=True)
 
     ## If something went wrong creating the bridges and tap interfaces, we panic and exit
     ## checkReturnCode( acc_status, "Creating bridge side-int-X and side-ext-X" )
@@ -292,14 +299,14 @@ def ns3():
     print('About to start NS3 RUN  with total emulation time of %s' % str(totalEmuTime))
 
     proc1 = subprocess.Popen(
-        "cd $NS3_HOME && sudo ./waf --run \"scratch/tap-vm --NumNodes=%s --TotalTime=%s --TapBaseName=emu --SizeX=%s --SizeY=%s --MobilitySpeed=%s --MobilityPause=%s\"" % (
+        "cd $NS3_HOME && ./waf --run \"scratch/tap-vm --NumNodes=%s --TotalTime=%s --TapBaseName=emu --SizeX=%s --SizeY=%s --MobilitySpeed=%s --MobilityPause=%s\"" % (
             numberOfNodesStr, str(totalEmuTime), scenarioSize, scenarioSize, nodeSpeed, nodePause), shell=True)
 
-    time.sleep(2)
+    time.sleep(5)
     print('proc1 = %s' % proc1.pid)
 
     with open(pidsDirectory + "ns3", "w") as text_file:
-        text_file.write(str(proc1.pid, 'utf-8'))
+        text_file.write(str(proc1.pid))
 
     print('Finished running NS3 in the background | Date now: %s' % datetime.datetime.now())
 
@@ -325,11 +332,11 @@ def runSim():
                 print('NS3 is still running with pid = ' + text.strip())
             else:
                 print('NS3 is NOT running')
-                isNs3Running = False
+                ns3()
 
     if isNs3Running:
         ## syncConfigTime (s) = seconds + ~seconds
-        syncConfigTime = int(time.time()) + 30
+        syncConfigTime = int(time.time()) + 35
 
         config1 = {
             'target': syncConfigTime,
@@ -357,8 +364,27 @@ def runSim():
             containerNameList += " "
 
         acc_status = subprocess.call("docker restart -t 0 %s" % containerNameList, shell=True)
+        checkReturnCodePassive(acc_status, "Restarting containers")
 
-        checkReturnCodePassive(acc_status, "Restarting containers ERROR")
+        acc_status = 0
+        for x in range(0, numberOfNodes):
+            cmd = ['docker', 'inspect', '--format', "'{{ .State.Pid }}'", nameList[x]]
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = p.communicate()
+            pid = out[1:-2].strip()
+
+            if os.path.exists(pidsDirectory + nameList[x]):
+                with open(pidsDirectory + nameList[x], "rt") as in_file:
+                    text = in_file.read()
+                    r_code = subprocess.call("rm -rf /var/run/netns/%s" % (text.strip()), shell=True)
+                    checkReturnCodePassive(r_code, "Destroying docker bridges %s" % (nameList[x]))
+
+            with open(pidsDirectory + nameList[x], "w") as text_file:
+                text_file.write(str(pid, 'utf-8'))
+
+            acc_status += subprocess.call("bash net/container.sh %s %s" % (nameList[x], x), shell=True)
+
+        checkReturnCodePassive(acc_status, "Cleaning old netns and setting up new")
 
     print('Finished RUN SIM | Date now: %s' % datetime.datetime.now())
 
@@ -384,33 +410,20 @@ def destroy():
 
     print("DESTROYING ALL CONTAINERS")
     r_code = subprocess.call("docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)", shell=True)
-    checkReturnCodePassive(r_code, "ERROR Destroying ALL containers")
-
-    print("DESTROYING ALL CONTAINERS")
-    r_code = subprocess.call("docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)", shell=True)
-    checkReturnCodePassive(r_code, "ERROR Destroying ALL containers")
-
-    time.sleep(1)
+    checkReturnCodePassive(r_code, "Destroying ALL containers")
 
     for x in range(0, numberOfNodes):
-        time.sleep(1)
 
-        # r_code = subprocess.call("docker stop -t 0 %s" % (nameList[x]), shell=True)
-        # checkReturnCodePassive( r_code, "Stopping docker container %s" % (nameList[x]))
-        #
-        # r_code = subprocess.call("docker rm %s" % (nameList[x]), shell=True)
-        # checkReturnCodePassive( r_code, "Removing docker container %s" % (nameList[x]))
-
-        r_code = subprocess.call("sudo bash net/singleDestroy.sh %s" % (nameList[x]), shell=True)
+        r_code = subprocess.call("bash net/singleDestroy.sh %s" % (nameList[x]), shell=True)
         checkReturnCodePassive(r_code, "Destroying bridge and tap interface %s" % (nameList[x]))
 
         if os.path.exists(pidsDirectory + nameList[x]):
             with open(pidsDirectory + nameList[x], "rt") as in_file:
                 text = in_file.read()
-                r_code = subprocess.call("sudo rm -rf /var/run/netns/%s" % (text.strip()), shell=True)
+                r_code = subprocess.call("rm -rf /var/run/netns/%s" % (text.strip()), shell=True)
                 checkReturnCodePassive(r_code, "Destroying docker bridges %s" % (nameList[x]))
 
-        r_code = subprocess.call("sudo rm -rf %s" % (pidsDirectory + nameList[x]), shell=True)
+        r_code = subprocess.call("rm -rf %s" % (pidsDirectory + nameList[x]), shell=True)
 
     return
 
