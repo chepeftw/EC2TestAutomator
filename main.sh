@@ -114,6 +114,15 @@ rm -rf var/archive/
 date > /home/ubuntu/foo.txt
 
 export NS3_HOME=/home/ubuntu/workspace/source/ns-3.26
+
+CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER create"
+echo $CMD
+$CMD
+
+CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER ns3"
+echo $CMD
+$CMD
+
 while [  $COUNTER -lt $TS_CYCLES ]; do
 
     if [ ! -f /home/ubuntu/stop.txt ]; then
@@ -126,17 +135,25 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
         mkdir -p var/archive/$DATENOW
         mv var/log/* var/archive/$DATENOW/
 
-        echo "python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER full"
-        python3 main.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER full
+        CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER simulation"
+        echo $CMD
+        $CMD
+
+        sleep 1m
 
         cd /home/ubuntu/EC2TestAutomator
-        echo "python3 statscollector2.py -ns $TS_SPEED -np $TS_PAUSE $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE"
-        python3 statscollector2.py -ns $TS_SPEED -np $TS_PAUSE $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE
+        CMD2="python3 statscollector2.py -ns $TS_SPEED -np $TS_PAUSE $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE"
+        echo $CMD2
+        $CMD2
     fi
 
 	let COUNTER=COUNTER+1
 	echo $COUNTER >> /home/ubuntu/foo.txt
 done
+
+CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER destroy"
+echo $CMD
+$CMD
 
 date >> /home/ubuntu/foo.txt
 echo $TS_NODES >> /home/ubuntu/foo.txt

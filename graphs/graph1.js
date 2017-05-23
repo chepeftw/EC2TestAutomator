@@ -58,7 +58,8 @@ chart: {
       }
     }
   },
-  series: [{
+  series: [
+  {
     name: '20 nodes',
     color: 'rgba(223, 83, 83, .5)',
     data: []
