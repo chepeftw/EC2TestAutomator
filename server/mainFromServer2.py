@@ -303,8 +303,6 @@ def runSim():
 
     print('About to start RUN SIM | Date now: %s' % datetime.datetime.now())
 
-    isNs3Running = True
-
     if os.path.exists(pidsDirectory + "ns3"):
         with open(pidsDirectory + "ns3", "rt") as in_file:
             text = in_file.read()
@@ -314,42 +312,47 @@ def runSim():
                 print('NS3 is NOT running')
                 ns3()
 
-    if isNs3Running:
-        ## syncConfigTime (s) = seconds + ~seconds
-        syncConfigTime = int(time.time()) + 35
+    containerNameList = ""
+    for x in range(0, numberOfNodes):
+        containerNameList += nameList[x]
+        containerNameList += " "
 
-        writeConf( syncConfigTime, numberOfNodes, timeoutStr, 1, 10001, "conf1.yml")
-        writeConf( syncConfigTime + 1, numberOfNodes, timeoutStr, 10, 10002, "conf2.yml")
+    acc_status = subprocess.call("docker restart -t 0 %s" % containerNameList, shell=True)
+    checkReturnCodePassive(acc_status, "Restarting containers")
 
-        containerNameList = ""
-        for x in range(0, numberOfNodes):
-            containerNameList += nameList[x]
-            containerNameList += " "
+    acc_status = 0
+    for x in range(0, numberOfNodes):
+        if os.path.exists(pidsDirectory + nameList[x]):
+            with open(pidsDirectory + nameList[x], "rt") as in_file:
+                text = in_file.read()
+                r_code = subprocess.call("rm -rf /var/run/netns/%s" % (text.strip()), shell=True)
+                checkReturnCodePassive(r_code, "Destroying docker bridges %s" % (nameList[x]))
 
-        acc_status = subprocess.call("docker restart -t 0 %s" % containerNameList, shell=True)
-        checkReturnCodePassive(acc_status, "Restarting containers")
+        cmd = ['docker', 'inspect', '--format', "'{{ .State.Pid }}'", nameList[x]]
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        pid = out[1:-2].strip()
 
-        acc_status = 0
-        for x in range(0, numberOfNodes):
-            cmd = ['docker', 'inspect', '--format', "'{{ .State.Pid }}'", nameList[x]]
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            out, err = p.communicate()
-            pid = out[1:-2].strip()
+        with open(pidsDirectory + nameList[x], "w") as text_file:
+            text_file.write(str(pid, 'utf-8'))
 
-            if os.path.exists(pidsDirectory + nameList[x]):
-                with open(pidsDirectory + nameList[x], "rt") as in_file:
-                    text = in_file.read()
-                    r_code = subprocess.call("rm -rf /var/run/netns/%s" % (text.strip()), shell=True)
-                    checkReturnCodePassive(r_code, "Destroying docker bridges %s" % (nameList[x]))
+    ## syncConfigTime (s) = seconds + ~seconds
+    syncConfigTime = int(time.time()) + numberOfNodes
+    writeConf(syncConfigTime, numberOfNodes, timeoutStr, 1, 10001, "conf1.yml")
+    writeConf(syncConfigTime + 1, numberOfNodes, timeoutStr, 10, 10002, "conf2.yml")
 
-            with open(pidsDirectory + nameList[x], "w") as text_file:
-                text_file.write(str(pid, 'utf-8'))
+    acc_status = 0
+    for x in range(0, numberOfNodes):
+        acc_status += subprocess.call("bash net/container.sh %s %s" % (nameList[x], x), shell=True)
 
-            acc_status += subprocess.call("bash net/container.sh %s %s" % (nameList[x], x), shell=True)
-
-        checkReturnCodePassive(acc_status, "Cleaning old netns and setting up new")
+    checkReturnCodePassive(acc_status, "Cleaning old netns and setting up new")
 
     print('Finished RUN SIM | Date now: %s' % datetime.datetime.now())
+    print('Letting the simulation run for %s' % str(numberOfNodes+25))
+
+    time.sleep( numberOfNodes + 25 )
+
+    print('Finished RUN SIM 2 | Date now: %s' % datetime.datetime.now())
 
     return
 

@@ -139,7 +139,7 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
         echo $CMD
         $CMD
 
-        sleep 1m
+        sleep 5
 
         cd /home/ubuntu/EC2TestAutomator
         CMD2="python3 statscollector2.py -ns $TS_SPEED -np $TS_PAUSE $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE"
