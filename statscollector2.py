@@ -175,8 +175,8 @@ def main(args):
         resultingMapOverall[keys] = 1
 
     resultingMap2 = dict()
-    # recursionDictionary( dictionaryT2, '10.12.0.10', resultingMap2 )
-    # lengthMap2 = len( resultingMap2.items() )
+    recursionDictionary( dictionaryT2, '10.12.0.10', resultingMap2 )
+    lengthMap2 = len( resultingMap2.items() )
 
     print("This is resultingMap2 ...")
     for keys, values in resultingMap2.items():
