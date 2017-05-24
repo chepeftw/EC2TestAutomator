@@ -28,10 +28,10 @@ def createDictionaryFromFile(filepath):
                     parentNode = values[1].strip()
                     childNode = values[3].strip()
 
-                    if parentNode in dictionaryT:
-                        dictionaryT[parentNode].append(childNode)
-                    else:
-                        dictionaryT[parentNode] = list(childNode)
+                    if parentNode not in dictionaryT:
+                        dictionaryT[parentNode] = list()
+
+                    dictionaryT[parentNode].append(childNode)
 
     return dictionaryT
 
