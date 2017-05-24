@@ -37,11 +37,10 @@ def createDictionaryFromFile(filepath):
 
 
 def recursionDictionary(dict, node, result):
-    needle = dict[node]
-
-    for item in needle:
-        recursionDictionary(dict, item, result)
-        result[item] = 1
+    if node in dict:
+        for item in dict[node]:
+            recursionDictionary(dict, item, result)
+            result[item] = 1
 
     result[node] = 1
 
@@ -167,7 +166,7 @@ def main(args):
     resultingMapOverall = dict()
 
     resultingMap1 = dict()
-    recursionDictionary( dictionaryT1, "10.12.0.1", resultingMap1 )
+    recursionDictionary( dictionaryT1, '10.12.0.1', resultingMap1 )
     lengthMap1 = len( resultingMap1.items() )
 
     print("This is resultingMap1 ...")
@@ -176,8 +175,8 @@ def main(args):
         resultingMapOverall[keys] = 1
 
     resultingMap2 = dict()
-    recursionDictionary( dictionaryT2, "10.12.0.10", resultingMap2 )
-    lengthMap2 = len( resultingMap2.items() )
+    # recursionDictionary( dictionaryT2, '10.12.0.10', resultingMap2 )
+    # lengthMap2 = len( resultingMap2.items() )
 
     print("This is resultingMap2 ...")
     for keys, values in resultingMap2.items():
