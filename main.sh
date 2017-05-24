@@ -47,6 +47,7 @@ TS_SIZE=$(echo "$TAGS" | grep Size | cut -f5)
 TS_NAME=$(echo "$TAGS" | grep EmulationName | cut -f5)
 TS_SPEED=$(echo "$TAGS" | grep Speed | cut -f5)
 TS_PAUSE=$(echo "$TAGS" | grep Pause | cut -f5)
+TS_INSTANCE=$(echo "$TAGS" | grep Instance | cut -f5)
 
 echo "Nodes $TS_NODES"
 echo "Cycles $TS_CYCLES"
@@ -56,6 +57,7 @@ echo "Size $TS_SIZE"
 echo "Speed $TS_SPEED"
 echo "Pause $TS_PAUSE"
 echo "Name $TS_NAME"
+echo "Instance $TS_INSTANCE"
 
 # We make sure we got the values, otherwise we abort mission
 if [ -z "$TS_NODES" ]
@@ -104,6 +106,23 @@ if [ -z "$TS_PAUSE" ]
 fi
 
 
+JOBS=0
+
+if [ "$TS_INSTANCE" == "c4.large" ]
+ then
+    echo "Instance is c4.large, 2 vCPU"
+    JOBS=2
+elif [ "$TS_INSTANCE" == "c4.xlarge" ]
+ then
+    echo "Instance is c4.xlarge, 4 vCPU"
+    JOBS=4
+elif [ "$TS_INSTANCE" == "c4.2xlarge" ]
+ then
+    echo "Instance is c4.2xlarge, 8 vCPU"
+    JOBS=8
+fi
+
+
 # We make sure we got the values, otherwise we abort mission
 COUNTER=0
 
@@ -115,11 +134,11 @@ date > /home/ubuntu/foo.txt
 
 export NS3_HOME=/home/ubuntu/workspace/source/ns-3.26
 
-CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER create"
+CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS create"
 echo $CMD
 $CMD
 
-CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER ns3"
+CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS ns3"
 echo $CMD
 $CMD
 
@@ -135,7 +154,7 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
         mkdir -p var/archive/$DATENOW
         mv var/log/* var/archive/$DATENOW/
 
-        CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER simulation"
+        CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS simulation"
         echo $CMD
         $CMD
 
@@ -152,7 +171,7 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
 done
 
 cd /home/ubuntu/tap
-CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER destroy"
+CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS destroy"
 echo $CMD
 $CMD
 

@@ -21,6 +21,7 @@ nodePause = '1'
 simulationCount = 0
 
 numberOfNodes = 0
+jobs = 1
 nameList = []
 
 baseContainerName0 = 'mybaseubuntu'
@@ -31,7 +32,7 @@ logsDirectory = "./var/log/"
 
 
 def main(args):
-    global numberOfNodesStr, emulationTimeStr, timeoutStr, nodeSpeed, nodePause, simulationCount, scenarioSize, numberOfNodes, nameList
+    global numberOfNodesStr, emulationTimeStr, timeoutStr, nodeSpeed, nodePause, simulationCount, scenarioSize, numberOfNodes, nameList, jobs
     print("Main ...")
 
     ###############################
@@ -55,6 +56,8 @@ def main(args):
                         help="The pause of the nodes expressed in s")
     parser.add_argument("-c", "--count", action="store",
                         help="The count of simulations")
+    parser.add_argument("-j", "--jobs", action="store",
+                        help="The number of parallel jobs")
     parser.add_argument('-v', '--version', action='version', version='%(prog)s 2.0')
     args = parser.parse_args()
 
@@ -72,6 +75,8 @@ def main(args):
         nodePause = args.nodepause
     if args.count:
         simulationCount = int(args.count)
+    if args.jobs:
+        jobs = int(args.jobs)
 
     operationStr = args.operationStr
 
@@ -151,13 +156,8 @@ def create():
     else:
         print("NS3 up to date!")
         print("Go to NS3 folder, probably cd $NS3_HOME")
-        print("Run ./waf --run \"scratch/tap-vm --NumNodes=%s --TotalTime=%s --TapBaseName=emu\"" % (
-            numberOfNodesStr, emulationTimeStr))
-        print(
-            "or run ./waf --run \"scratch/tap-vm --NumNodes=%s --TotalTime=%s --TapBaseName=emu --SizeX=100 --SizeY=100\"" % (
-                numberOfNodesStr, emulationTimeStr))
 
-    r_code = subprocess.call("cd $NS3_HOME && ./waf build", shell=True)
+    r_code = subprocess.call("cd $NS3_HOME && ./waf build -j {} -d optimized --disable-examples".format(jobs), shell=True)
     if r_code == 0:
         print("NS3 BUILD WIN!")
     else:
@@ -278,9 +278,10 @@ def ns3():
 
     print('About to start NS3 RUN  with total emulation time of %s' % str(totalEmuTime))
 
-    proc1 = subprocess.Popen(
-        "cd $NS3_HOME && ./waf --run \"scratch/tap-vm --NumNodes=%s --TotalTime=%s --TapBaseName=emu --SizeX=%s --SizeY=%s --MobilitySpeed=%s --MobilityPause=%s\"" % (
-            numberOfNodesStr, str(totalEmuTime), scenarioSize, scenarioSize, nodeSpeed, nodePause), shell=True)
+    ns3Cmd = 'cd $NS3_HOME && ./waf -j {0} -d optimized --disable-examples --run "scratch/tap-vm --NumNodes={1} --TotalTime={2} --TapBaseName=emu --SizeX={3} --SizeY={3} --MobilitySpeed={4} --MobilityPause={5}"'.format(jobs, numberOfNodesStr, totalEmuTime, scenarioSize, nodeSpeed, nodePause)
+
+    print(ns3Cmd)
+    proc1 = subprocess.Popen(ns3Cmd, shell=True)
 
     time.sleep(5)
     print('proc1 = %s' % proc1.pid)
