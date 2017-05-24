@@ -13,6 +13,39 @@ from pymongo import MongoClient
 __author__ = 'chepe'
 
 
+# log.Info(" ||| " + myIP.String() + " ||| RemoveFromList ||| " + payload.Source.String() + " ||| ")
+
+def createDictionaryFromFile(filepath):
+    REMOVE_FROM_LIST = " ||| RemoveFromList ||| "
+    dictionaryT = dict()
+
+    # iterate for each file path in the list
+    for fp in filepath:
+        with open(fp, 'r') as f:
+            for line in f:
+                if REMOVE_FROM_LIST in line:
+                    values = line.split(" ||| ")
+                    parentNode = values[1].strip()
+                    childNode = values[3].strip()
+
+                    if parentNode in dictionaryT:
+                        dictionaryT[parentNode].append(childNode)
+                    else:
+                        dictionaryT[parentNode] = list(childNode)
+
+    return dictionaryT
+
+
+def recursionDictionary(dict, node, result):
+    needle = dict[node]
+
+    for item in needle:
+        recursionDictionary(dict, item, result)
+        result[item] = 1
+
+    result[node] = 1
+
+
 ###############################################################################
 # main
 ###############################################################################
@@ -35,8 +68,6 @@ def main(args):
                         help="The pause of the nodes expressed in s")
     args = parser.parse_args()
 
-
-
     ###############################################################################
     # First we read all logs, collecting the important values
     ###############################################################################
@@ -48,6 +79,9 @@ def main(args):
 
     # Get filepaths for all files which end with ".txt" and start with "travel_times_to_ 59721":
     filepaths = glob.glob(os.path.join(folder, '**/*.log'), recursive=True)
+
+    filepathsT1 = glob.glob(os.path.join(folder, '**/treesip10001.log'), recursive=True)
+    filepathsT2 = glob.glob(os.path.join(folder, '**/treesip10002.log'), recursive=True)
 
     # log constants
     RESULT_STRING = " RESULT="
@@ -88,7 +122,6 @@ def main(args):
                 elif CONVERGENCE_TIME_STRING in line:
                     convergence = int(line.split(CONVERGENCE_TIME_STRING)[1].rstrip())
 
-
     node2Path = Path(rootNode2)
     if node2Path.is_file():
         with open(rootNode2, 'r') as f:
@@ -97,7 +130,6 @@ def main(args):
                     computation2 = int(line.split(RESULT_STRING)[1].rstrip())
                 elif CONVERGENCE_TIME_STRING in line:
                     convergence2 = int(line.split(CONVERGENCE_TIME_STRING)[1].rstrip())
-
 
     # iterate for each file path in the list
     for fp in filepaths:
@@ -116,6 +148,45 @@ def main(args):
                     internal += int(line.split(SENT_I_STRING)[1].rstrip())
                 elif ROUTE_STRING in line:
                     routed += int(line.split(ROUTE_STRING)[1].rstrip())
+
+    # log.Info(" ||| " + myIP.String() + " ||| RemoveFromList ||| " + payload.Source.String() + " ||| ")
+
+    dictionaryT1 = createDictionaryFromFile(filepathsT1)
+    dictionaryT2 = createDictionaryFromFile(filepathsT2)
+
+    print("This is dictionaryT1 ...")
+    for keys, values in dictionaryT1.items():
+        print(keys)
+        print(values)
+
+    print("This is dictionaryT2 ...")
+    for keys, values in dictionaryT2.items():
+        print(keys)
+        print(values)
+
+    resultingMapOverall = dict()
+
+    resultingMap1 = dict()
+    recursionDictionary( dictionaryT1, "10.12.0.1", resultingMap1 )
+    lengthMap1 = len( resultingMap1.items() )
+
+    print("This is resultingMap1 ...")
+    for keys, values in resultingMap1.items():
+        print(keys)
+        resultingMapOverall[keys] = 1
+
+    resultingMap2 = dict()
+    recursionDictionary( dictionaryT2, "10.12.0.10", resultingMap2 )
+    lengthMap2 = len( resultingMap2.items() )
+
+    print("This is resultingMap2 ...")
+    for keys, values in resultingMap2.items():
+        print(keys)
+        resultingMapOverall[keys] = 1
+
+    lengthMapOverall = len(resultingMapOverall.items())
+
+
 
     ###############################################################################
     # Then we connect to MongoDB and store the values
@@ -168,6 +239,10 @@ def main(args):
         'msg_sent': int(sent),
         'msg_internal': int(internal),
         'msg_routed': int(routed),
+
+        'length_map1': int(lengthMap1),
+        'length_map2': int(lengthMap2),
+        'length_map_all': int(lengthMapOverall),
 
         'created': datetime.now(),
     }
