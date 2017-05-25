@@ -136,12 +136,30 @@ main (int argc, char *argv[])
   GlobalValue::Bind ("SimulatorImplementationType", StringValue ("ns3::RealtimeSimulatorImpl"));
   GlobalValue::Bind ("ChecksumEnabled", BooleanValue (true));
 
+
+  // Enable parallel simulator with the command line arguments
+  MpiInterface::Enable (&argc, &argv);
+
+
+
   //
   // Create NumNodes ghost nodes.
   //
   NS_LOG_UNCOND ("Creating nodes");
   NodeContainer nodes;
-  nodes.Create (NumNodes);
+  nodes.Create (NumNodes/2, 0);
+  nodes.Create (NumNodes/2, 1);
+
+//  uint32_t systemId = MpiInterface::GetSystemId ();
+  uint32_t systemCount = MpiInterface::GetSize ();
+
+  // Check for valid distributed parameters.
+  // Must have 2 or 3 tasks.
+  if (systemCount < 2)
+  {
+      std::cout << "This simulation requires 2 or 3 logical processors." << std::endl;
+      return 1;
+  }
 
   //
   // We're going to use 802.11 A so set up a wifi helper to reflect that.
@@ -297,4 +315,7 @@ main (int argc, char *argv[])
   Simulator::Stop (Seconds (TotalTime));
   Simulator::Run ();
   Simulator::Destroy ();
+
+  // Exit the MPI execution environment
+  MpiInterface::Disable ();
 }

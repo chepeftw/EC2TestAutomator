@@ -106,11 +106,15 @@ if [ -z "$TS_PAUSE" ]
 fi
 
 
-JOBS=0
+JOBS=1
 
 if [ "$TS_INSTANCE" == "c4.large" ]
  then
     echo "Instance is c4.large, 2 vCPU"
+    JOBS=2
+elif [ "$TS_INSTANCE" == "t2.medium" ]
+ then
+    echo "Instance is t2.medium, 2 vCPU"
     JOBS=2
 elif [ "$TS_INSTANCE" == "c4.xlarge" ]
  then
