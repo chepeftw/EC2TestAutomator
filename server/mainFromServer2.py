@@ -278,7 +278,8 @@ def ns3():
 
     print('About to start NS3 RUN  with total emulation time of %s' % str(totalEmuTime))
 
-    ns3Cmd = 'cd $NS3_HOME && mpirun -np 2 ./waf -j {0} -d optimized --disable-examples --run "scratch/tap-vm --NumNodes={1} --TotalTime={2} --TapBaseName=emu --SizeX={3} --SizeY={3} --MobilitySpeed={4} --MobilityPause={5}"'.format(jobs, numberOfNodesStr, totalEmuTime, scenarioSize, nodeSpeed, nodePause)
+    # ns3Cmd = 'cd $NS3_HOME && mpirun -np 2 ./waf -j {0} --run "scratch/tap-vm --NumNodes={1} --TotalTime={2} --TapBaseName=emu --SizeX={3} --SizeY={3} --MobilitySpeed={4} --MobilityPause={5}"'.format(jobs, numberOfNodesStr, totalEmuTime, scenarioSize, nodeSpeed, nodePause)
+    ns3Cmd = 'cd $NS3_HOME && ./waf -j {0} --run "scratch/tap-vm --NumNodes={1} --TotalTime={2} --TapBaseName=emu --SizeX={3} --SizeY={3} --MobilitySpeed={4} --MobilityPause={5}"'.format(jobs, numberOfNodesStr, totalEmuTime, scenarioSize, nodeSpeed, nodePause)
 
     print(ns3Cmd)
     proc1 = subprocess.Popen(ns3Cmd, shell=True)

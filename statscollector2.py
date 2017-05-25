@@ -90,6 +90,7 @@ def main(args):
     SENT_STRING = " SENDING_MESSAGE="
     SENT_I_STRING = " INTERNAL_MESSAGE="
     ROUTE_STRING = " SUCCESS_ROUTE="
+    AUTOMATA_TIME = " ATTEND_BUFFER_CHANNEL_START_TIME="
 
     # variables
     computation = 0
@@ -101,6 +102,8 @@ def main(args):
     sent = 0
     internal = 0
     routed = 0
+    automata = 0
+    automataC = 0
 
     nodeSpeed = 0
     nodePause = 0
@@ -147,6 +150,11 @@ def main(args):
                     internal += int(line.split(SENT_I_STRING)[1].rstrip())
                 elif ROUTE_STRING in line:
                     routed += int(line.split(ROUTE_STRING)[1].rstrip())
+                elif AUTOMATA_TIME in line:
+                    automata += int(line.split(ROUTE_STRING)[1].rstrip())
+                    automataC += 1
+
+    automata = int(automata/automataC)
 
     # log.Info(" ||| " + myIP.String() + " ||| RemoveFromList ||| " + payload.Source.String() + " ||| ")
 
@@ -238,6 +246,8 @@ def main(args):
         'msg_sent': int(sent),
         'msg_internal': int(internal),
         'msg_routed': int(routed),
+
+        'automata': int(automata),
 
         'length_map1': int(lengthMap1),
         'length_map2': int(lengthMap2),

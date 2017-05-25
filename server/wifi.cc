@@ -20,6 +20,15 @@
 // https://groups.google.com/forum/#!topic/ns-3-users/zy2VIrgh-Qo
 
 
+// Running NS3 optimized
+// ./waf distclean
+// ./waf -d optimized configure --disable-examples --disable-tests --disable-python --enable-static --no-task-lines
+// ./waf
+
+// Running NS3 with MPI
+// https://www.nsnam.org/docs/models/html/distributed.html#current-implementation-details
+// it seems not feasible due to AWS restrictions, MAYBE it works in a dedicated server
+
 
 //
 // This is an illustration of how one could use virtualization techniques to
@@ -78,11 +87,16 @@
 
 #include "ns3/core-module.h"
 #include "ns3/network-module.h"
+//#include "ns3/mpi-interface.h"
 #include "ns3/mobility-module.h"
 #include "ns3/wifi-module.h"
 #include "ns3/tap-bridge-module.h"
 
- #include "ns3/netanim-module.h"
+//#include "ns3/netanim-module.h"
+
+//#ifdef NS3_MPI
+//#include <mpi.h>
+//#endif
 
 using namespace ns3;
 
@@ -114,18 +128,20 @@ main (int argc, char *argv[])
   cmd.AddValue ("GridDistance", "Grid distance", distance);
   cmd.AddValue ("SizeX", "Scenario Size in X axis", scenarioSizeX);
   cmd.AddValue ("SizeY", "Scenario Size in Y axis", scenarioSizeY);
+  cmd.AddValue ("MobilityPause", "Mobility Pause", nodePause);
+  cmd.AddValue ("MobilitySpeed", "Mobility Speed", nodeSpeed);
 //  cmd.AddValue ("AnimationOn", "Enable animation", AnimationOn);
 
   cmd.Parse (argc,argv);
 
-  printf("NumNodes = %d\n", NumNodes);
-  printf("TotalTime = %f\n", TotalTime);
-  printf("gridRowSize = %d\n", gridRowSize);
-  printf("distance = %f\n", distance);
-  printf("scenarioSizeX = %f\n", scenarioSizeX);
-  printf("scenarioSizeY = %f\n", scenarioSizeY);
-  printf("nodeSpeed = %d\n", nodeSpeed);
-  printf("nodePause = %d\n", nodePause);
+//  printf("NumNodes = %d\n", NumNodes);
+//  printf("TotalTime = %f\n", TotalTime);
+//  printf("gridRowSize = %d\n", gridRowSize);
+//  printf("distance = %f\n", distance);
+//  printf("scenarioSizeX = %f\n", scenarioSizeX);
+//  printf("scenarioSizeY = %f\n", scenarioSizeY);
+//  printf("nodeSpeed = %d\n", nodeSpeed);
+//  printf("nodePause = %d\n", nodePause);
 //  printf("AnimationOn = %s\n", AnimationOn ? "true" : "false");
 
   //
@@ -138,33 +154,35 @@ main (int argc, char *argv[])
 
 
   // Enable parallel simulator with the command line arguments
-  MpiInterface::Enable (&argc, &argv);
+//  MpiInterface::Enable (&argc, &argv);
 
 
 
   //
   // Create NumNodes ghost nodes.
   //
-  NS_LOG_UNCOND ("Creating nodes");
+//  NS_LOG_UNCOND ("Creating nodes");
   NodeContainer nodes;
-  nodes.Create (NumNodes/2, 0);
-  nodes.Create (NumNodes/2, 1);
+  nodes.Create (NumNodes);
+//  nodes.Create (NumNodes/2, 0);
+//  nodes.Create (NumNodes/2, 1);
 
 //  uint32_t systemId = MpiInterface::GetSystemId ();
-  uint32_t systemCount = MpiInterface::GetSize ();
-
-  // Check for valid distributed parameters.
-  // Must have 2 or 3 tasks.
-  if (systemCount < 2)
-  {
-      std::cout << "This simulation requires 2 or 3 logical processors." << std::endl;
-      return 1;
-  }
+//  uint32_t systemCount = MpiInterface::GetSize ();
+//  std::cout << "systemCount = " << systemCount << std::endl;
+//
+//  // Check for valid distributed parameters.
+//  // Must have 2 or 3 tasks.
+//  if (systemCount < 2)
+//  {
+//      std::cout << "This simulation requires 2 or 3 logical processors." << std::endl;
+//      return 1;
+//  }
 
   //
   // We're going to use 802.11 A so set up a wifi helper to reflect that.
   //
-  NS_LOG_UNCOND ("Creating wifi");
+//  NS_LOG_UNCOND ("Creating wifi");
   WifiHelper wifi;
   wifi.SetStandard (WIFI_PHY_STANDARD_80211a);
   wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager", "DataMode", StringValue ("OfdmRate54Mbps"));
@@ -172,14 +190,14 @@ main (int argc, char *argv[])
   //
   // No reason for pesky access points, so we'll use an ad-hoc network.
   //
-  NS_LOG_UNCOND ("Creating ad hoc wifi mac");
+//  NS_LOG_UNCOND ("Creating ad hoc wifi mac");
   WifiMacHelper wifiMac;
   wifiMac.SetType ("ns3::AdhocWifiMac");
 
   //
   // Configure the physcial layer.
   //
-  NS_LOG_UNCOND ("Configuring physical layer");
+//  NS_LOG_UNCOND ("Configuring physical layer");
   YansWifiChannelHelper wifiChannel = YansWifiChannelHelper::Default ();
   YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default ();
   wifiPhy.SetChannel (wifiChannel.Create ());
@@ -193,7 +211,7 @@ main (int argc, char *argv[])
   // We need location information since we are talking about wifi, so add a
   // constant position to the ghost nodes.
   //
-  NS_LOG_UNCOND ("Configuring mobility");
+//  NS_LOG_UNCOND ("Configuring mobility");
   MobilityHelper mobility;
 
   // ++++++++++++++++++++++++++++++++++++
@@ -208,7 +226,7 @@ main (int argc, char *argv[])
   yAxisMax << "ns3::UniformRandomVariable[Min=0.0|Max=" << scenarioSizeY << "]";
   pos.Set ("X", StringValue ( xAxisMax.str () ));
   pos.Set ("Y", StringValue ( yAxisMax.str () ));
-  NS_LOG_UNCOND ("Allocation => ns3::RandomRectanglePositionAllocator");
+//  NS_LOG_UNCOND ("Allocation => ns3::RandomRectanglePositionAllocator");
   Ptr<PositionAllocator> taPositionAlloc = pos.Create ()->GetObject<PositionAllocator> ();
 
   // ObjectFactory pos;
@@ -235,7 +253,7 @@ main (int argc, char *argv[])
   ssSpeed << "ns3::UniformRandomVariable[Min=0.0|Max=" << nodeSpeed << "]";
   std::stringstream ssPause;
   ssPause << "ns3::ConstantRandomVariable[Constant=" << nodePause << "]";
-  NS_LOG_UNCOND ("Mobility => ns3::RandomWaypointMobilityModel");
+//  NS_LOG_UNCOND ("Mobility => ns3::RandomWaypointMobilityModel");
   mobility.SetMobilityModel ("ns3::RandomWaypointMobilityModel",
                                   "Speed", StringValue (ssSpeed.str ()),
                                   "Pause", StringValue (ssPause.str ()),
@@ -275,7 +293,7 @@ main (int argc, char *argv[])
   // only see traffic from one other device on that bridge.  That is the case
   // for this configuration.
   //
-  NS_LOG_UNCOND ("Creating tap bridges");
+//  NS_LOG_UNCOND ("Creating tap bridges");
   TapBridgeHelper tapBridge;
   tapBridge.SetAttribute ("Mode", StringValue ("UseLocal"));
 
@@ -311,11 +329,11 @@ main (int argc, char *argv[])
   //
   // Run the simulation for TotalTime seconds to give the user time to play around
   //
-  NS_LOG_UNCOND ("Running simulation in wifi mode");
+//  NS_LOG_UNCOND ("Running simulation in wifi mode");
   Simulator::Stop (Seconds (TotalTime));
   Simulator::Run ();
   Simulator::Destroy ();
 
   // Exit the MPI execution environment
-  MpiInterface::Disable ();
+//  MpiInterface::Disable ();
 }
