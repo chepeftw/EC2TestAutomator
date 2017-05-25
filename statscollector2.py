@@ -151,7 +151,7 @@ def main(args):
                 elif ROUTE_STRING in line:
                     routed += int(line.split(ROUTE_STRING)[1].rstrip())
                 elif AUTOMATA_TIME in line:
-                    automata += int(line.split(ROUTE_STRING)[1].rstrip())
+                    automata += int(line.split(AUTOMATA_TIME)[1].rstrip())
                     automataC += 1
 
     automata = int(automata/automataC)
