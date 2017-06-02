@@ -11,24 +11,24 @@ Timeout="$7"
 Speed="$8"
 Pause="$9"
 
-AMI_SINGLE="ami-22563742"
+AMI_SINGLE="ami-583d5138"
 ITYPE="t2.small"
 
 case "$Nodes" in
-"40") ITYPE="t2.small"
+"30") ITYPE="t2.small"
    ;;
-"50") ITYPE="t2.medium"
+"40") ITYPE="t2.medium"
    ;;
-"60") ITYPE="t2.large"
+"50") ITYPE="c4.large"
     ;;
-"70") ITYPE="t2.large"
+"60") ITYPE="c4.large"
     ;;
-"80") ITYPE="t2.large"
-    ;;
-"90") ITYPE="t2.large"
-    ;;
-"100") ITYPE="t2.xlarge"
-    ;;
+#"80") ITYPE="t2.large"
+#    ;;
+#"90") ITYPE="t2.large"
+#    ;;
+#"100") ITYPE="t2.xlarge"
+#    ;;
 esac
 
 aws ec2 run-instances \
@@ -55,14 +55,14 @@ while [  $COUNTER -lt 6 ]; do
     while [  $NODESN -lt 60 ]; do
         let TIMEEMU=NODESN*2
         let TIMEEMU=TIMEEMU+30
-            EMUNAME="SimpleN1_"$NODESN"_"$SPEED
+            EMUNAME="JulySingle_"$NODESN"_"$SPEED"_"$TOUT
             # awsTreesip Name EmulationName Cycles Nodes Size TimeEmu Timeout Speed Pause InstanceType
             CMD="awsTreesip Treesip$EMUNAME $EMUNAME $CCLES $NODESN $SIZEN $TIMEEMU $TOUT $SPEED 0"
             echo $CMD
             $CMD
 
         let NODESN=NODESN+10
-        let SIZEN=SIZEN+50
+        let SIZEN=NODESN*15
     done
 	let COUNTER=COUNTER+1
 done

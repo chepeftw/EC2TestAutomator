@@ -1,6 +1,6 @@
 db.testcases.aggregate(
    [
-    { $match: { name: { $regex: /SimpleN1_.*/, $options: "si" }, computation: { $type: "int" }, nodes: { $type: "int" }, computation: { $gt: 0 }, nodes: { $lt: 60 } } },
+    { $match: { name: { $regex: /MultiNPlus.*/, $options: "si" }, computation: { $type: "int" }, nodes: { $type: "int" }, computation: { $gt: 0 }, nodes: { $lt: 60 } } },
      {
        $group:
          {
