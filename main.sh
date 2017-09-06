@@ -16,7 +16,13 @@ echo "bar" >&2
 echo "Waiting to start ... hi :) ..."
 rm -rf /home/ubuntu/continue.txt /home/ubuntu/stop.txt
 
-sleep 2m
+if [ -z "$1" ]
+  then
+    echo "No argument supplied"
+    sleep 2m
+else
+    sleep $1
+fi
 
 docker stop $(docker ps -a -q)
 docker rm $(docker ps -a -q)
