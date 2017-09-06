@@ -129,6 +129,7 @@ fi
 
 # We make sure we got the values, otherwise we abort mission
 COUNTER=0
+MAIN_SCRIPT="main.new.py"
 
 cd /home/ubuntu/tap
 rm -rf var/archive/
@@ -138,11 +139,11 @@ date > /home/ubuntu/foo.txt
 
 export NS3_HOME=/home/ubuntu/workspace/source/ns-3.26
 
-CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS create"
+CMD="python3 $MAIN_SCRIPT -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS create"
 echo $CMD
 $CMD
 
-CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS ns3"
+CMD="python3 $MAIN_SCRIPT -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS ns3"
 echo $CMD
 $CMD
 
@@ -158,7 +159,7 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
         mkdir -p var/archive/$DATENOW
         mv var/log/* var/archive/$DATENOW/
 
-        CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS simulation"
+        CMD="python3 $MAIN_SCRIPT -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS simulation"
         echo $CMD
         $CMD
 
@@ -167,7 +168,7 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
         cd /home/ubuntu/EC2TestAutomator
         CMD2="python3 statscollector2.py -ns $TS_SPEED -np $TS_PAUSE $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE"
         echo $CMD2
-        $CMD2
+#        $CMD2
     fi
 
 	let COUNTER=COUNTER+1
@@ -175,7 +176,7 @@ while [  $COUNTER -lt $TS_CYCLES ]; do
 done
 
 cd /home/ubuntu/tap
-CMD="python3 main2.py -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS destroy"
+CMD="python3 $MAIN_SCRIPT -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS destroy"
 echo $CMD
 $CMD
 
