@@ -42,28 +42,32 @@ INSTANCE=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 # Then based on the Instance ID, we get all tags
 TAGS=$(~/.local/bin/aws ec2 describe-tags --filters "Name=resource-id,Values=$INSTANCE" --output=text)
 
-echo "$TAGS"
+echo "${TAGS}"
 
 # Then we select the tag we need
-TS_NODES=$(echo "$TAGS" | grep Nodes | cut -f5)
-TS_CYCLES=$(echo "$TAGS" | grep Cycles | cut -f5)
-TS_TIME=$(echo "$TAGS" | grep Timeemu | cut -f5)
-TS_TIMEOUT=$(echo "$TAGS" | grep Timeout | cut -f5)
-TS_SIZE=$(echo "$TAGS" | grep Size | cut -f5)
-TS_NAME=$(echo "$TAGS" | grep EmulationName | cut -f5)
-TS_SPEED=$(echo "$TAGS" | grep Speed | cut -f5)
-TS_PAUSE=$(echo "$TAGS" | grep Pause | cut -f5)
-TS_INSTANCE=$(echo "$TAGS" | grep Instance | cut -f5)
+TS_NODES=$(echo "${TAGS}" | grep Nodes | cut -f5)
+TS_CYCLES=$(echo "${TAGS}" | grep Cycles | cut -f5)
+TS_TIME=$(echo "${TAGS}" | grep Timeemu | cut -f5)
+TS_TIMEOUT=$(echo "${TAGS}" | grep Timeout | cut -f5)
+TS_SIZE=$(echo "${TAGS}" | grep Size | cut -f5)
+TS_NAME=$(echo "${TAGS}" | grep EmulationName | cut -f5)
+TS_SPEED=$(echo "${TAGS}" | grep Speed | cut -f5)
+TS_PAUSE=$(echo "${TAGS}" | grep Pause | cut -f5)
+TS_INSTANCE=$(echo "${TAGS}" | grep Instance | cut -f5)
 
-echo "Nodes $TS_NODES"
-echo "Cycles $TS_CYCLES"
-echo "Time $TS_TIME"
-echo "Timeout $TS_TIMEOUT"
-echo "Size $TS_SIZE"
-echo "Speed $TS_SPEED"
-echo "Pause $TS_PAUSE"
-echo "Name $TS_NAME"
-echo "Instance $TS_INSTANCE"
+TS_CRYPTOPIECE=$(echo "${TAGS}" | grep CryptoPiece | cut -f5)
+
+echo "Nodes ${TS_NODES}"
+echo "Cycles ${TS_CYCLES}"
+echo "Time ${TS_TIME}"
+echo "Timeout ${TS_TIMEOUT}"
+echo "Size ${TS_SIZE}"
+echo "Speed ${TS_SPEED}"
+echo "Pause ${TS_PAUSE}"
+echo "Name ${TS_NAME}"
+echo "Instance ${TS_INSTANCE}"
+
+echo "Crypto Piece ${TS_CRYPTOPIECE}"
 
 # We make sure we got the values, otherwise we abort mission
 if [ -z "$TS_NODES" ]
@@ -139,57 +143,67 @@ MAIN_SCRIPT="main.new.py"
 
 cd /home/ubuntu/tap
 rm -rf var/archive/
-python3 $MAIN_SCRIPT -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE destroy
+python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE} destroy
 
 date > /home/ubuntu/foo.txt
 
 export NS3_HOME=/home/ubuntu/workspace/source/ns-3.26
 
-CMD="python3 $MAIN_SCRIPT -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS create"
-echo $CMD
-$CMD
+CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} -j ${JOBS} create"
+echo ${CMD}
+${CMD}
 
-CMD="python3 $MAIN_SCRIPT -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS ns3"
-echo $CMD
-$CMD
+CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} -j ${JOBS} ns3"
+echo ${CMD}
+${CMD}
 
-while [  $COUNTER -lt $TS_CYCLES ]; do
+while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
 
     if [ ! -f /home/ubuntu/stop.txt ]; then
         cd /home/ubuntu/tap
         DATENOW=$(date +"%y_%m_%d_%H_%M")
         echo "---------------------------"
-        echo $DATENOW
-        echo "var/archive/$DATENOW"
+        echo ${DATENOW}
+        echo "var/archive/${DATENOW}"
         echo "---------------------------"
-        mkdir -p var/archive/$DATENOW
-        mv var/log/* var/archive/$DATENOW/
+        mkdir -p var/archive/${DATENOW}
+        mv var/log/* var/archive/${DATENOW}/
 
-        CMD="python3 $MAIN_SCRIPT -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS emulation"
-        echo $CMD
-        $CMD
+        CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} -j ${JOBS} emulation"
+        echo ${CMD}
+        ${CMD}
 
         sleep 5
 
+        greprc=1
+
+        while [ ${greprc} -eq 1 ]; do
+            grep -r "PLEASE_EXIT=1234" var/log/*
+            greprc=$?
+
+            echo "Waiting..."
+            sleep 2
+        done
+
         cd /home/ubuntu/EC2TestAutomator
-        CMD2="python3 statscollector2.py -ns $TS_SPEED -np $TS_PAUSE $TS_NAME $TS_NODES $TS_TIME $TS_TIMEOUT $TS_SIZE"
-        echo $CMD2
-#        $CMD2
+        CMD2="python3 statscollector2.py -ns ${TS_SPEED} -np ${TS_PAUSE} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+        echo ${CMD2}
+#        ${CMD2}
     fi
 
 	let COUNTER=COUNTER+1
-	echo $COUNTER >> /home/ubuntu/foo.txt
+	echo ${COUNTER} >> /home/ubuntu/foo.txt
 done
 
 cd /home/ubuntu/tap
-CMD="python3 $MAIN_SCRIPT -n $TS_NODES -t $TS_TIME -to $TS_TIMEOUT -s $TS_SIZE -ns $TS_SPEED -np $TS_PAUSE -c $COUNTER -j $JOBS destroy"
-echo $CMD
-$CMD
+CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} -j ${JOBS} destroy"
+echo ${CMD}
+${CMD}
 
 date >> /home/ubuntu/foo.txt
-echo $TS_NODES >> /home/ubuntu/foo.txt
-echo $TS_TIME >> /home/ubuntu/foo.txt
-echo $TS_CYCLES >> /home/ubuntu/foo.txt
+echo ${TS_NODES} >> /home/ubuntu/foo.txt
+echo ${TS_TIME} >> /home/ubuntu/foo.txt
+echo ${TS_CYCLES} >> /home/ubuntu/foo.txt
 echo "Done!" >> /home/ubuntu/foo.txt
 
 DAY=$(date '+%d')
@@ -198,8 +212,8 @@ YEAR=$(date '+%Y')
 
 export PATH=/home/ubuntu/.local/bin/:$PATH
 
-cp /home/ubuntu/EC2TestAutomator/logfile.txt /home/ubuntu/$TS_NAME.log
-aws s3 cp /home/ubuntu/$TS_NAME.log s3://treesip/$YEAR/$MONTH/$DAY/$TS_NAME/
+cp /home/ubuntu/EC2TestAutomator/logfile.txt /home/ubuntu/${TS_NAME}.log
+aws s3 cp /home/ubuntu/${TS_NAME}.log s3://treesip/${YEAR}/${MONTH}/${DAY}/${TS_NAME}/
 
 echo "Waiting to complete ..."
 sleep 2m
