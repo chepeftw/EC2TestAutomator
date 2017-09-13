@@ -161,7 +161,7 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
 
     if [ ! -f /home/ubuntu/stop.txt ]; then
         cd /home/ubuntu/tap
-        DATENOW=$(date +"%y_%m_%d_%H_%M")
+        DATENOW=$(date +"%y_%m_%d_%H_%M_%S")
         echo "---------------------------"
         echo ${DATENOW}
         echo "var/archive/${DATENOW}"
