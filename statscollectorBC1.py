@@ -4,7 +4,6 @@ import argparse
 import glob
 import os
 from datetime import datetime
-
 import yaml
 from pymongo import MongoClient
 
@@ -17,22 +16,14 @@ __author__ = 'chepe'
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("name", type=str,
-                        help="The number of nodes of the simulation")
-    parser.add_argument("nodes", type=int,
-                        help="The number of nodes of the simulation")
-    parser.add_argument("time", type=int,
-                        help="The time of the simulation")
-    parser.add_argument("timeout", type=int,
-                        help="The timeout of the simulation")
-    parser.add_argument("size", type=int,
-                        help="The size of the network in the simulation")
-    parser.add_argument("-ns", "--nodespeed", action="store",
-                        help="The speed of the nodes expressed in m/s")
-    parser.add_argument("-np", "--nodepause", action="store",
-                        help="The pause of the nodes expressed in s")
-    parser.add_argument("-cp", "--cryptopiece", action="store",
-                        help="The piece of the crypto puzzle")
+    parser.add_argument("name", type=str, help="The number of nodes of the simulation")
+    parser.add_argument("nodes", type=int, help="The number of nodes of the simulation")
+    parser.add_argument("time", type=int, help="The time of the simulation")
+    parser.add_argument("timeout", type=int, help="The timeout of the simulation")
+    parser.add_argument("size", type=int, help="The size of the network in the simulation")
+    parser.add_argument("-ns", "--nodespeed", action="store", help="The speed of the nodes expressed in m/s")
+    parser.add_argument("-np", "--nodepause", action="store", help="The pause of the nodes expressed in s")
+    parser.add_argument("-cp", "--cryptopiece", action="store", help="The piece of the crypto puzzle")
     args = parser.parse_args()
 
     ###############################################################################
@@ -43,13 +34,10 @@ def main():
 
     # Set folder:
     folder = "/home/ubuntu/tap/var/log/"
-
     # Get filepaths for all files which end with ".txt" and start with "travel_times_to_ 59721":
     filepaths = glob.glob(os.path.join(folder, '**/miner.log'), recursive=True)
-
     # log constants
     hashes_string = " HASHES_GENERATED="
-
     # variables
     hashes = {}
 
@@ -62,7 +50,7 @@ def main():
             for line in f:
                 if hashes_string in line:
                     hashes[fp][i] = int(line.split(hashes_string)[1].rstrip())
-                    i = i+1
+                    i = i + 1
 
     # Then we connect to MongoDB and store the values
 
@@ -90,7 +78,7 @@ def main():
     connection.admin.authenticate(user, pasw, mechanism='SCRAM-SHA-1')
     print("Connected to mongo ...")
 
-    # connect to the treesip database and the testcases collection
+    # DATABASE selection
     db = connection.blockchain.tests
 
     for key1, value1 in hashes.items():

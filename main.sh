@@ -115,6 +115,11 @@ if [ -z "$TS_PAUSE" ]
     TS_PAUSE="1"
 fi
 
+if [ -z "$TS_CRYPTOPIECE" ]
+  then
+    TS_CRYPTOPIECE="00"
+fi
+
 
 JOBS=1
 
@@ -169,8 +174,7 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
         mkdir -p var/archive/${DATENOW}
         mv var/log/* var/archive/${DATENOW}/
 
-#        CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} -j ${JOBS} emulation"
-        CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t 20 -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} -j ${JOBS} emulation"
+        CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} -j ${JOBS} -cp ${TS_CRYPTOPIECE} emulation"
         echo ${CMD}
         ${CMD}
 
@@ -185,9 +189,9 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
         done
 
         cd /home/ubuntu/EC2TestAutomator
-        CMD2="python3 statscollector2.py -ns ${TS_SPEED} -np ${TS_PAUSE} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+        CMD2="python3 statscollectorBC1.py -ns ${TS_SPEED} -np ${TS_PAUSE} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
         echo ${CMD2}
-#        ${CMD2}
+        ${CMD2}
     fi
 
 	let COUNTER=COUNTER+1
