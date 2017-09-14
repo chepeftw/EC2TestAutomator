@@ -38,8 +38,6 @@ def main():
     # iterate for each file path in the list
     for fp in filepaths:
         # Open the file in read mode
-        values_ms[fp] = 0
-        values_ns[fp] = 0
         with open(fp, 'r') as f:
             for line in f:
                 if miner_time_ns_string in line:
