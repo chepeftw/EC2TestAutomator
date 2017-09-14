@@ -81,8 +81,8 @@ def main():
     # DATABASE selection
     db = connection.blockchain.tests
 
-    for key1, value1 in hashes.items():
-        for key2, value2 in value1:
+    for key1, values1 in hashes.items():
+        for key2, value2 in values1.items():
             # create dictionary and place values in dictionary
             record = {
                 'hashes': int(value2),
