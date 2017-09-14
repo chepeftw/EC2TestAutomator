@@ -177,11 +177,9 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
         sleep 5
 
         greprc=1
-
         while [ ${greprc} -eq 1 ]; do
             grep -r "PLEASE_EXIT=1234" var/log/*
             greprc=$?
-
             echo "Waiting..."
             sleep 2
         done
