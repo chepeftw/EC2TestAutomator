@@ -24,6 +24,7 @@ def main():
     parser.add_argument("-ns", "--nodespeed", action="store", help="The speed of the nodes expressed in m/s")
     parser.add_argument("-np", "--nodepause", action="store", help="The pause of the nodes expressed in s")
     parser.add_argument("-cp", "--cryptopiece", action="store", help="The piece of the crypto puzzle")
+    parser.add_argument("-ct", "--count", action="store", help="The piece of the crypto puzzle")
     args = parser.parse_args()
 
     ###############################################################################
@@ -88,6 +89,9 @@ def main():
                 'hashes': int(value2),
                 'file': key1,
                 'index': key2,
+
+                'cryptopiece': args.cryptopiece,
+                'count': args.count,
 
                 'name': args.name,
                 'nodes': int(args.nodes),
