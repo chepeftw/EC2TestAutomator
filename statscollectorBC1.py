@@ -41,13 +41,13 @@ def main():
     hashes_string = " HASHES_GENERATED="
     # variables
     hashes = {}
-
+    i = 0
+    
     # iterate for each file path in the list
     for fp in filepaths:
         # Open the file in read mode
         hashes[fp] = {}
         with open(fp, 'r') as f:
-            i = 0
             for line in f:
                 if hashes_string in line:
                     hashes[fp][i] = int(line.split(hashes_string)[1].rstrip())
