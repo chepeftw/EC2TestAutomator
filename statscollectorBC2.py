@@ -29,18 +29,24 @@ def main():
     folder = "/home/ubuntu/tap/var/log/"
     filepaths = glob.glob(os.path.join(folder, '**/miner.log'), recursive=True)
 
-    hashes_string = "HASHES_GENERATED="
-    hashes = {}
+    miner_time_ns_string = "MINER_WIN_TIME_NS="
+    miner_time_ms_string = "MINER_WIN_TIME_MS="
+    values_ms = {}
+    values_ns = {}
     i = 0
     
     # iterate for each file path in the list
     for fp in filepaths:
         # Open the file in read mode
-        hashes[fp] = {}
+        values_ms[fp] = 0
+        values_ns[fp] = 0
         with open(fp, 'r') as f:
             for line in f:
-                if hashes_string in line:
-                    hashes[fp][i] = int(line.split(hashes_string)[1].rstrip())
+                if miner_time_ns_string in line:
+                    values_ns[fp] = int(line.split(miner_time_ns_string)[1].rstrip())
+                    i = i + 1
+                elif miner_time_ms_string in line:
+                    values_ms[fp] = int(line.split(miner_time_ms_string)[1].rstrip())
                     i = i + 1
 
     # Then we connect to MongoDB and store the values
@@ -70,34 +76,34 @@ def main():
     print("Connected to mongo ...")
 
     # DATABASE selection
-    db = connection.blockchain.pow_hashes
+    db = connection.blockchain.pow_time
 
-    for key1, values1 in hashes.items():
-        for key2, value2 in values1.items():
-            # create dictionary and place values in dictionary
-            record = {
-                'hashes': int(value2),
-                'file': key1,
-                'index': key2,
+    for key in values_ns.keys():
+        # create dictionary and place values in dictionary
+        record = {
+            'file': key,
 
-                'cryptopiece': args.cryptopiece,
-                'count': args.count,
+            'time_ns': values_ns[key],
+            'time_ms': values_ms[key],
 
-                'name': args.name,
-                'nodes': int(args.nodes),
-                'duration': int(args.time),
-                'timeout': int(args.timeout),
-                'size': int(args.size),
+            'cryptopiece': args.cryptopiece,
+            'count': args.count,
 
-                'created': datetime.now(),
-            }
-            # insert the record
-            print("Inserting record ...")
+            'name': args.name,
+            'nodes': int(args.nodes),
+            'duration': int(args.time),
+            'timeout': int(args.timeout),
+            'size': int(args.size),
 
-            for x in record.keys():
-                print("{0} => {1}".format(x, record[x]))
+            'created': datetime.now(),
+        }
+        # insert the record
+        print("Inserting record ...")
 
-            db.insert_one(record)
+        for x in record.keys():
+            print("{0} => {1}".format(x, record[x]))
+
+        db.insert_one(record)
 
     print("Closing ...")
     # close the connection to MongoDB

@@ -192,6 +192,10 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
         CMD2="python3 statscollectorBC1.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
         echo ${CMD2}
         ${CMD2}
+
+        CMD2="python3 statscollectorBC2.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+        echo ${CMD2}
+        ${CMD2}
     fi
 
 	let COUNTER=COUNTER+1
