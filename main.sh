@@ -187,7 +187,7 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
 
         greprc=1
         while [ ${greprc} -eq 1 ]; do
-            grep -r "PLEASE_EXIT=234" var/log/*
+            grep -r "PLEASE_EXIT=1234" var/log/*
             greprc=$?
 
             TIMEOFCHANGE=$(date +%s)
