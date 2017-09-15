@@ -180,6 +180,9 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
 
         sleep 5
 
+        GLOBAL_TIMEOFCHANGE=0
+        GLOBAL_TOTALOFLINES=0
+
         greprc=1
         while [ ${greprc} -eq 1 ]; do
             grep -r "PLEASE_EXIT=1234" var/log/*
@@ -190,8 +193,19 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
             ROUTER_LINES=$(cat /home/ubuntu/tap/var/log/emu*/router.log | wc -l)
             MONITOR_LINES=$(cat /home/ubuntu/tap/var/log/emu*/monitor.log | wc -l)
             let TOTAL_LINES=MINER_LINES+ROUTER_LINES+MONITOR_LINES
+            let TIMEDIFF=TIMEOFCHANGE-GLOBAL_TIMEOFCHANGE
+            OUTPUT9=""
 
-            echo "Waiting... ${TIMEOFCHANGE} and ${TOTAL_LINES}"
+            if [ ${GLOBAL_TOTALOFLINES} -lt ${TOTAL_LINES} ]; then
+                GLOBAL_TOTALOFLINES=${TOTAL_LINES}
+                GLOBAL_TIMEOFCHANGE=${TIMEOFCHANGE}
+                OUTPUT9="updating"
+            elif [ ${TIMEDIFF} -gt 400 ]; then
+                echo "There is a big problem man!"
+                OUTPUT9="darkz vader"
+            fi
+
+            echo "Waiting... ${TIMEOFCHANGE} and ${TOTAL_LINES} => ${OUTPUT9}"
             sleep 2
         done
 
