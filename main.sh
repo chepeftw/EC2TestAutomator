@@ -213,8 +213,9 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
             sleep 2
         done
 
+        cd /home/ubuntu/EC2TestAutomator
+
         if [ ${DARKZ_VADER} -eq 0 ]; then
-            cd /home/ubuntu/EC2TestAutomator
             CMD2="python3 statscollectorBC1.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
             echo ${CMD2}
             ${CMD2}
