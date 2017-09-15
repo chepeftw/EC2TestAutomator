@@ -184,7 +184,14 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
         while [ ${greprc} -eq 1 ]; do
             grep -r "PLEASE_EXIT=1234" var/log/*
             greprc=$?
-            echo "Waiting..."
+
+            TIMEOFCHANGE=$(date +%s)
+            MINER_LINES=$(cat /home/ubuntu/tap/var/log/emu*/miner.log | wc -l)
+            ROUTER_LINES=$(cat /home/ubuntu/tap/var/log/emu*/router.log | wc -l)
+            MONITOR_LINES=$(cat /home/ubuntu/tap/var/log/emu*/monitor.log | wc -l)
+            let TOTAL_LINES=MINER_LINES+ROUTER_LINES+MONITOR_LINES
+
+            echo "Waiting... ${TIMEOFCHANGE} and ${TOTAL_LINES}"
             sleep 2
         done
 
