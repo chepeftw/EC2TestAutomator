@@ -183,6 +183,8 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
         GLOBAL_TIMEOFCHANGE=0
         GLOBAL_TOTALOFLINES=0
 
+        DARKZ_VADER=0
+
         greprc=1
         while [ ${greprc} -eq 1 ]; do
             grep -r "PLEASE_EXIT=234" var/log/*
@@ -200,23 +202,34 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
                 GLOBAL_TOTALOFLINES=${TOTAL_LINES}
                 GLOBAL_TIMEOFCHANGE=${TIMEOFCHANGE}
                 OUTPUT9="updating"
-            elif [ ${TIMEDIFF} -gt 400 ]; then
+            elif [ ${TIMEDIFF} -gt 200 ]; then
                 echo "There is a big problem man!"
                 OUTPUT9="darkz vader"
+                DARKZ_VADER=1
+                break
             fi
 
             echo "Waiting... ${TIMEOFCHANGE} and ${TOTAL_LINES} => ${OUTPUT9}"
             sleep 2
         done
 
-        cd /home/ubuntu/EC2TestAutomator
-        CMD2="python3 statscollectorBC1.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
-        echo ${CMD2}
-        ${CMD2}
+        if [ ${DARKZ_VADER} -eq 0 ]; then
+            cd /home/ubuntu/EC2TestAutomator
+            CMD2="python3 statscollectorBC1.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+            echo ${CMD2}
+            ${CMD2}
 
-        CMD2="python3 statscollectorBC2.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
-        echo ${CMD2}
-        ${CMD2}
+            CMD2="python3 statscollectorBC2.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+            echo ${CMD2}
+            ${CMD2}
+        else
+            echo "This means something went wrong :("
+
+            CMD2="python3 statscollectorBC0.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+            echo ${CMD2}
+            ${CMD2}
+        fi
+
     fi
 
 	let COUNTER=COUNTER+1
