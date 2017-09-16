@@ -31,21 +31,30 @@ def main():
 
     miner_time_ns_string = "MINER_WIN_TIME_NS="
     miner_time_ms_string = "MINER_WIN_TIME_MS="
+    hashes_string = "HASHES_GENERATED="
     values_ms = {}
     values_ns = {}
+    values_hg = {}
     i = 0
     
     # iterate for each file path in the list
     for fp in filepaths:
         # Open the file in read mode
+        the_win_file = False
         with open(fp, 'r') as f:
             for line in f:
                 if miner_time_ns_string in line:
                     values_ns[fp] = int(line.split(miner_time_ns_string)[1].rstrip())
                     i = i + 1
+                    the_win_file = True
                 elif miner_time_ms_string in line:
                     values_ms[fp] = int(line.split(miner_time_ms_string)[1].rstrip())
                     i = i + 1
+                    the_win_file = True
+
+                if the_win_file:
+                    if hashes_string in line:
+                        values_hg[fp] = int(line.split(hashes_string)[1].rstrip())
 
     # Then we connect to MongoDB and store the values
 
@@ -83,6 +92,7 @@ def main():
 
             'time_ns': values_ns[key],
             'time_ms': values_ms[key],
+            'hashes': values_hg[key],
 
             'cryptopiece': args.cryptopiece,
             'count': args.count,
