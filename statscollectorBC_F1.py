@@ -24,7 +24,7 @@ def main():
     # First we read all logs, collecting the important values
     ###############################################################################
 
-    print("Reading log files ...")
+    # print("Reading log files ...")
 
     folder = "/home/ubuntu/tap/var/log/"
     filepaths = glob.glob(os.path.join(folder, '**/miner.log'), recursive=True)
@@ -45,7 +45,7 @@ def main():
 
     # Then we connect to MongoDB and store the values
 
-    print("Loading config.yml ...")
+    # print("Loading config.yml ...")
     with open('config.yml', 'r') as f:
         doc = yaml.load(f)
 
@@ -64,10 +64,10 @@ def main():
         if 'pasw' in doc['parameters']:
             pasw = doc['parameters']['pasw']
 
-    print("Connecting to mongo ...")
+    # print("Connecting to mongo ...")
     connection = MongoClient(host, port)
     connection.admin.authenticate(user, pasw, mechanism='SCRAM-SHA-1')
-    print("Connected to mongo ...")
+    # print("Connected to mongo ...")
 
     # DATABASE selection
     db = connection.blockchain.full_hashes
@@ -94,8 +94,8 @@ def main():
             # insert the record
             print("Inserting record ...")
 
-            for x in record.keys():
-                print("{0} => {1}".format(x, record[x]))
+            # for x in record.keys():
+            #     print("{0} => {1}".format(x, record[x]))
 
             db.insert_one(record)
 
