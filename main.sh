@@ -182,7 +182,7 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
 
         sleep 5
 
-        GLOBAL_TIMEOFCHANGE=0
+        GLOBAL_TIMEOFCHANGE=$(date +%s)
         GLOBAL_TOTALOFLINES=0
 
         DARKZ_VADER=0
