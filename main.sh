@@ -226,33 +226,33 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
 
         if [ ${DARKZ_VADER} -eq 0 ]; then
             # Counting hashes
-            CMD2="python3 statscollectorBC_F1.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+            CMD2="python3 statscollectorBC_F0.py -ns ${TS_SPEED} -np ${TS_PAUSE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE} messagecount"
             echo ${CMD2}
             ${CMD2}
 
-            # Miner win times
-            CMD2="python3 statscollectorBC_F2.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
-            echo ${CMD2}
-            ${CMD2}
-
-            # Convergence time
-            CMD2="python3 statscollectorBC_F3.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
-            echo ${CMD2}
-            ${CMD2}
-
-            # Number of messages
-            CMD2="python3 statscollectorBC_F4.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
-            echo ${CMD2}
-            ${CMD2}
-
-            # query broadcast times
-            CMD2="python3 statscollectorBC_F5.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
-            echo ${CMD2}
-            ${CMD2}
+#            # Miner win times
+#            CMD2="python3 statscollectorBC_F2.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+#            echo ${CMD2}
+#            ${CMD2}
+#
+#            # Convergence time
+#            CMD2="python3 statscollectorBC_F3.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+#            echo ${CMD2}
+#            ${CMD2}
+#
+#            # Number of messages
+#            CMD2="python3 statscollectorBC_F4.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+#            echo ${CMD2}
+#            ${CMD2}
+#
+#            # query broadcast times
+#            CMD2="python3 statscollectorBC_F5.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+#            echo ${CMD2}
+#            ${CMD2}
         else
             echo "This means something went wrong :("
 
-            CMD2="python3 statscollectorBC_F0.py -ns ${TS_SPEED} -np ${TS_PAUSE} -cp ${TS_CRYPTOPIECE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+            CMD2="python3 statscollectorBC_F0.py -ns ${TS_SPEED} -np ${TS_PAUSE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE} fail"
             echo ${CMD2}
             ${CMD2}
         fi
