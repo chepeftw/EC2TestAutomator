@@ -1,6 +1,7 @@
+DBQuery.shellBatchSize = 150
 db.testcases.aggregate(
    [
-    { '$match': { name: { $regex: /JulySingle.*/, $options: "si" }, 'computation': { '$type': "int" }, 'nodes': { '$type': "int" } } },
+    { '$match': { name: { $regex: /JulySingle.*/, $options: "si" }, 'computation': { '$gt': 1 } } },
      {
        '$group':
          {

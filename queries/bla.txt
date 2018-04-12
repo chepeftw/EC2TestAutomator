@@ -1,0 +1,26 @@
+db.testcases.aggregate(
+   [
+    { $match: { name: { $regex: /MultiN4_.*/, $options: "si" }, computation: { $type: "int" }, nodes: { $type: "int" }, computation: { $gt: 0 }, computation2: { $gt: 0 }, nodes: { $lt: 60 } } },
+     {
+       $group:
+         {
+           _id: null,
+           avgComputations: { $avg: "$computation" },
+           sdsComputations: { $stdDevSamp: "$computation" },
+           sdpComputations: { $stdDevPop: "$computation" },
+           avgComputations2: { $avg: "$computation2" },
+           sdpComputations2: { $stdDevSamp: "$computation2" },
+           nodes: { $avg: "$nodes" },
+           a_computations:
+              { $avg: {
+                $divide: [ { $sum: [ "$computation", "$computation2"] }, 2 ]
+              } },
+           timeout: { $avg: "$timeout" },
+           speed: { $avg: "$node_speed" },
+
+           runs: { $sum: 1 }
+         }
+     },
+     { $sort: { runs: -1 } }
+   ]
+)

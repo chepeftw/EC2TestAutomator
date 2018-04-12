@@ -156,11 +156,11 @@ date > /home/ubuntu/foo.txt
 
 export NS3_HOME=/home/ubuntu/workspace/source/ns-3.26
 
-CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} -j ${JOBS} create"
+CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} create"
 echo ${CMD}
 ${CMD}
 
-CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} -j ${JOBS} ns3"
+CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} ns3"
 echo ${CMD}
 ${CMD}
 
@@ -176,7 +176,7 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
         mkdir -p var/archive/${DATENOW}
         mv var/log/* var/archive/${DATENOW}/
 
-        CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} -j ${JOBS} -cp ${TS_CRYPTOPIECE} emulation"
+        CMD="python3 ${MAIN_SCRIPT} -n ${TS_NODES} -t ${TS_TIME} -to ${TS_TIMEOUT} -s ${TS_SIZE} -ns ${TS_SPEED} -np ${TS_PAUSE}  -c ${COUNTER} emulation"
         echo ${CMD}
         ${CMD}
 

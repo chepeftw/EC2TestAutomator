@@ -3,61 +3,34 @@
  */
 
 var options = {
-chart: {
-    type: 'scatter',
-    zoomType: 'xy'
-  },
-  title: {
-    text: 'Timeout vs Accuracy for different number of nodes'
-  },
-  xAxis: {
+
     title: {
-      enabled: true,
-      text: 'Timeout (ms)'
+        text: 'Timeout vs Accuracy for different number of nodes (10m/s)'
     },
-    startOnTick: true,
-    endOnTick: true,
-    showLastLabel: true
-  },
-  yAxis: {
-    title: {
-      text: 'Accuracy'
-    }
-  },
-  legend: {
-    layout: 'vertical',
-    align: 'left',
-    verticalAlign: 'top',
-    x: 60,
-    y: 340,
-    floating: true,
-    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
-    borderWidth: 1
-  },
-  plotOptions: {
-    scatter: {
-      marker: {
-        radius: 5,
-        states: {
-          hover: {
-            enabled: true,
-            lineColor: 'rgb(100,100,100)'
-          }
+
+    yAxis: {
+        title: {
+            text: 'Accuracy'
         }
-      },
-      states: {
-        hover: {
-          marker: {
-            enabled: false
-          }
+    },
+
+    xAxis: {
+        title: {
+            text: 'Timeout (ms)'
         }
-      },
-      tooltip: {
-        headerFormat: '<b>{series.name}</b><br>',
-        pointFormat: '{point.x} cm, {point.y} kg'
-      }
-    }
-  },
+    },
+
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle'
+    },
+
+    plotOptions: {
+        series: {
+            pointStart: 10
+        }
+    },
   series: [
   {
     name: '20 nodes',

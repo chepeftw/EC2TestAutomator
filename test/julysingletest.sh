@@ -47,7 +47,7 @@ aws ec2 run-instances \
 printAndCall() {
     CMD="$1"
     echo $CMD
-    $CMD
+    #$CMD
 }
 
 # Timeout Test for 20 nodes

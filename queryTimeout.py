@@ -8,6 +8,27 @@ from bson import json_util
 import yaml
 from pymongo import MongoClient
 
+def assembleQuery( regex, timeout, speed ):
+    return [
+            { '$match': { 'name': { '$regex': regex, '$options': "si" }, 'timeout': timeout, 'node_speed': speed } },
+               {
+                   '$group':
+                       {
+                           '_id': "$name",
+                           'nodes': {'$avg': "$nodes"},
+                           'accuracy': {'$avg': {'$divide': ["$length_map_all", "$nodes"]}},
+                       }
+               },
+               {'$sort': {'nodes': 1}},
+           ]
+
+def queryToJson( db, regex, timeout, speed, mode ):
+    result = db.aggregate(assembleQuery(regex, timeout, speed))
+    filenameEval = 'graphs/multi_' + str(mode) + '_' + str(speed) + '_' + str(timeout) + '.json'
+    print("JSON ...")
+    f = open(filenameEval, 'w')
+    f.write(json.dumps(list(result), default=json_util.default))
+
 if __name__ == '__main__':
   try:
       print("Loading config.yml ...")
@@ -38,27 +59,74 @@ if __name__ == '__main__':
     connection = None
 
   if connection is not None:
-    for num in range(2, 7):
-        db = connection.treesip.testcases
+    # for num in range(1, 6):
+    #     db = connection.treesip.testcases
+    #
+    #     queryToJson( db, 'JulySingle.*', 200, num * 2, 's' )
+    #     queryToJson( db, 'JulyMulti.*', 200, num * 2, 'm' )
+    #
+    #     queryToJson(db, 'JulySingle.*', 400, num * 2, 's')
+    #     queryToJson(db, 'JulyMulti.*', 400, num * 2, 'm')
 
-        regexEval = 'Tmout_' + str(num*10) + '.*'
-        print(regexEval)
-        result = db.aggregate(
-           [
-            { '$match': { 'name': { '$regex': regexEval, '$options': "si" }, 'computation': { '$type': "int" }, 'nodes': { '$type': "int" } } },
-               {
-                   '$group':
-                       {
-                           '_id': "$name",
-                           'timeout': {'$avg': "$timeout"},
-                           'accuracy': {'$avg': {'$divide': ["$computation", "$nodes"]}},
-                       }
-               },
-               {'$sort': {'timeout': 1}},
-           ]
-        )
+    differences = []
 
-        filenameEval = 'test' + str(num * 10) + '.json'
-        print("JSON ...")
-        f = open(filenameEval, 'w')
-        f.write(json.dumps(list(result), default=json_util.default))
+    for num in range(1, 6):
+        for num2 in range(2, 7):
+            for num3 in range(1, 3):
+                db = connection.treesip.testcases
+
+                regex = 'JulySingle.*'
+                timeout = num3 * 200
+                nodes = num2 * 10
+                speed = num * 2
+
+                result = db.aggregate([
+                { '$match': { 'name': { '$regex': regex, '$options': "si" }, 'timeout': timeout, 'node_speed': speed, 'nodes': nodes } },
+                   {
+                       '$group':
+                           {
+                               '_id': "$name",
+                               'accuracy': {'$avg': {'$divide': ["$length_map_all", "$nodes"]}},
+                           }
+                   },
+                ])
+
+                singleVal = 0
+                # your values are in dictionary format..
+                for a in result:
+                    for key, val in a.items():
+                        if 'accuracy' in key:
+                            singleVal = val  # now you got only date column values
+
+
+
+                regex = 'JulyMulti.*'
+
+                result = db.aggregate([
+                { '$match': { 'name': { '$regex': regex, '$options': "si" }, 'timeout': timeout, 'node_speed': speed, 'nodes': nodes } },
+                   {
+                       '$group':
+                           {
+                               '_id': "$name",
+                               'accuracy': {'$avg': {'$divide': ["$length_map_all", "$nodes"]}},
+                           }
+                   },
+                ])
+
+                multiVal = 0
+                # your values are in dictionary format..
+                for a in result:
+                    for key, val in a.items():
+                        if 'accuracy' in key:
+                            multiVal = val  # now you got only date column values
+
+                differences.append( multiVal - singleVal )
+                print( str(timeout )+ ' - ' + str(nodes) + ' - ' + str(speed) + ' => ' + str(multiVal - singleVal) )
+
+    dmin = min(differences)
+    dmax = max(differences)
+    davg = sum(differences)/len(differences)
+
+    print ( "Min => " + str(dmin) )
+    print ( "Max => " + str(dmax) )
+    print ( "Avg => " + str(davg) )
