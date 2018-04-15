@@ -11,12 +11,9 @@ from pymongo import MongoClient
 __author__ = 'chepe'
 
 
-def failfunc(connection, args):
-    # DATABASE selection
-    db = connection.blockchain.full_fails
-
+def failfunc(args):
     # create dictionary and place values in dictionary
-    record = {
+    return {
         'fail': int(1),
 
         'count': args.count,
@@ -29,13 +26,9 @@ def failfunc(connection, args):
 
         'created': datetime.now(),
     }
-    # insert the record
-    print("Inserting record ...")
-    db.insert_one(record)
 
 
-def msgcountfunc(connection, args):
-
+def msgcountfunc(args):
     folder = "/home/ubuntu/tap/var/log/"
     filesets = glob.glob(os.path.join(folder, '**/raft.log'), recursive=True)
 
@@ -64,11 +57,8 @@ def msgcountfunc(connection, args):
 
     messages_size_total = int(messages_size/messages_sent)
 
-    # DATABASE selection
-    db = connection.blockchain.sent_messages
-
     # create dictionary and place values in dictionary
-    record = {
+    return {
         'messages_count': int(messages_sent),
         'messages_size': int(messages_size_total),
 
@@ -82,9 +72,6 @@ def msgcountfunc(connection, args):
 
         'created': datetime.now(),
     }
-    # insert the record
-    print("Inserting record ...")
-    db.insert_one(record)
 
 
 def main():
@@ -114,28 +101,35 @@ def main():
 
     host = '54.186.74.114'
     port = 27017
-    user = 'username'
-    pasw = 'password'
+    # user = 'username'
+    # pasw = 'password'
 
     if 'parameters' in doc:
         if 'host' in doc['parameters']:
             host = doc['parameters']['host']
         if 'port' in doc['parameters']:
             port = doc['parameters']['port']
-        if 'user' in doc['parameters']:
-            user = doc['parameters']['user']
-        if 'pasw' in doc['parameters']:
-            pasw = doc['parameters']['pasw']
+        # if 'user' in doc['parameters']:
+        #     user = doc['parameters']['user']
+        # if 'pasw' in doc['parameters']:
+        #     pasw = doc['parameters']['pasw']
 
     # print("Connecting to mongo ...")
     connection = MongoClient(host, port)
-    connection.admin.authenticate(user, pasw, mechanism='SCRAM-SHA-1')
+    db = connection.blockchain
+    # connection.admin.authenticate(user, pasw, mechanism='SCRAM-SHA-1')
     # print("Connected to mongo ...")
 
     if args.operation == "fail":
-        failfunc(connection, args)
+        collection = db.full_fails
+        record = failfunc(args)
     elif args.operation == "messagecount":
-        msgcountfunc(connection, args)
+        collection = db.sent_messages
+        record = msgcountfunc(args)
+
+    # insert the record
+    print("Inserting record ...")
+    collection.insert_one(record)
 
     print("Closing ...")
     # close the connection to MongoDB
