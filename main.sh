@@ -193,10 +193,10 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
             greprc=$?
 
             TIMEOFCHANGE=$(date +%s)
-            MINER_LINES=$(cat /home/ubuntu/tap/var/log/emu*/miner.log | wc -l)
-            ROUTER_LINES=$(cat /home/ubuntu/tap/var/log/emu*/router.log | wc -l)
-            MONITOR_LINES=$(cat /home/ubuntu/tap/var/log/emu*/monitor.log | wc -l)
-            let TOTAL_LINES=MINER_LINES+ROUTER_LINES+MONITOR_LINES
+            RAFT_LINES=$(cat /home/ubuntu/tap/var/log/emu*/raft.log | wc -l)
+#            ROUTER_LINES=$(cat /home/ubuntu/tap/var/log/emu*/router.log | wc -l)
+#            MONITOR_LINES=$(cat /home/ubuntu/tap/var/log/emu*/monitor.log | wc -l)
+            let TOTAL_LINES=RAFT_LINES
             let TIMEDIFF=TIMEOFCHANGE-GLOBAL_TIMEOFCHANGE
             OUTPUT9=""
 
