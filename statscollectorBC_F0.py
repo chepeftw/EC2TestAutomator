@@ -119,7 +119,7 @@ def channelfunc():
     filesets = glob.glob(os.path.join(folder, '**/raft.log'), recursive=True)
 
     buffer_channel_time_string = "RAFT_ATTEND_BUFFER_CHANNEL_START_TIME="
-    buffer_channel_time = ""
+    buffer_channel_time = 0
     buffer_channel_time_count = 0
 
     # iterate for each file path in the list
