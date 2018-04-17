@@ -110,7 +110,9 @@ def electionfunc():
     return {
         'winner': winner,
         'winner_count': int(winner_count),
-        'election_time': int(election_time_total),
+        'election_time_ns': int(election_time_total),
+        'election_time_ms': int(election_time_total/1000000),
+        'election_time_s': int((election_time_total/1000000)/1000),
     }
 
 
