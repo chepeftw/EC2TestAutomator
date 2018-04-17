@@ -102,7 +102,7 @@ def electionfunc():
         with open(fp, 'r') as f:
             for line in f:
                 if election_time_string in line:
-                    election_time += line.split(election_time_string)[1].rstrip()
+                    election_time += int(line.split(election_time_string)[1].rstrip())
                     election_time_count += 1
 
     election_time_total = int(election_time / election_time_count)
@@ -128,7 +128,7 @@ def channelfunc():
         with open(fp, 'r') as f:
             for line in f:
                 if buffer_channel_time_string in line:
-                    buffer_channel_time += line.split(buffer_channel_time_string)[1].rstrip()
+                    buffer_channel_time += int(line.split(buffer_channel_time_string)[1].rstrip())
                     buffer_channel_time_count += 1
 
     buffer_channel_time_total = int(buffer_channel_time / buffer_channel_time_count)
