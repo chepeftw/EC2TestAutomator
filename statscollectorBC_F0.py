@@ -11,24 +11,13 @@ from pymongo import MongoClient
 __author__ = 'chepe'
 
 
-def failfunc(args):
-    # create dictionary and place values in dictionary
+def failfunc():
     return {
         'fail': int(1),
-
-        'count': args.count,
-
-        'name': args.name,
-        'nodes': int(args.nodes),
-        'duration': int(args.time),
-        'timeout': int(args.timeout),
-        'size': int(args.size),
-
-        'created': datetime.now(),
     }
 
 
-def msgcountfunc(args):
+def msgcountfunc():
     folder = "/home/ubuntu/tap/var/log/"
     filesets = glob.glob(os.path.join(folder, '**/raft.log'), recursive=True)
 
@@ -43,7 +32,6 @@ def msgcountfunc(args):
                 if sending_message_string in line:
                     messages_sent += 1
 
-
     message_size_string = "RAFT_MESSAGE_SIZE="
     messages_size = 0
 
@@ -55,22 +43,98 @@ def msgcountfunc(args):
                 if message_size_string in line:
                     messages_size += int(line.split(message_size_string)[1].rstrip())
 
-    messages_size_total = int(messages_size/messages_sent)
+    messages_size_total = int(messages_size / messages_sent)
 
-    # create dictionary and place values in dictionary
     return {
         'messages_count': int(messages_sent),
         'messages_size': int(messages_size_total),
+    }
 
-        'count': args.count,
 
-        'name': args.name,
-        'nodes': int(args.nodes),
-        'duration': int(args.time),
-        'timeout': int(args.timeout),
-        'size': int(args.size),
+def avgmediumtimefunc():
+    folder = "/home/ubuntu/tap/var/log/"
+    filesets = glob.glob(os.path.join(folder, '**/raft.log'), recursive=True)
 
-        'created': datetime.now(),
+    message_avgtime_string = "RAFT_AVG_TIME="
+    message_avgtime = 0
+    message_avgtime_count = 0
+
+    # iterate for each file path in the list
+    for fp in filesets:
+        # Open the file in read mode
+        with open(fp, 'r') as f:
+            for line in f:
+                if message_avgtime_string in line:
+                    message_avgtime += int(line.split(message_avgtime_string)[1].rstrip())
+                    message_avgtime_count += 1
+
+    messages_avgtime_total = int(message_avgtime / message_avgtime_count)
+
+    return {
+        'average_medium_time': int(messages_avgtime_total),
+    }
+
+
+def electionfunc():
+    folder = "/home/ubuntu/tap/var/log/"
+    filesets = glob.glob(os.path.join(folder, '**/raft.log'), recursive=True)
+
+    winner_string = "RAFT_WINNER="
+    winner = ""
+    winner_count = 0
+
+    # iterate for each file path in the list
+    for fp in filesets:
+        # Open the file in read mode
+        with open(fp, 'r') as f:
+            for line in f:
+                if winner_string in line:
+                    winner = line.split(winner_string)[1].rstrip()
+                    winner_count += 1
+
+    election_time_string = "RAFT_ELECTION_TIME="
+    election_time = 0
+    election_time_count = 0
+
+    # iterate for each file path in the list
+    for fp in filesets:
+        # Open the file in read mode
+        with open(fp, 'r') as f:
+            for line in f:
+                if election_time_string in line:
+                    election_time += line.split(election_time_string)[1].rstrip()
+                    election_time_count += 1
+
+    election_time_total = int(election_time / election_time_count)
+
+    return {
+        'winner': winner,
+        'winner_count': int(winner_count),
+        'election_time': int(election_time_total),
+    }
+
+
+def channelfunc():
+    folder = "/home/ubuntu/tap/var/log/"
+    filesets = glob.glob(os.path.join(folder, '**/raft.log'), recursive=True)
+
+    buffer_channel_time_string = "RAFT_ATTEND_BUFFER_CHANNEL_START_TIME="
+    buffer_channel_time = ""
+    buffer_channel_time_count = 0
+
+    # iterate for each file path in the list
+    for fp in filesets:
+        # Open the file in read mode
+        with open(fp, 'r') as f:
+            for line in f:
+                if buffer_channel_time_string in line:
+                    buffer_channel_time += line.split(buffer_channel_time_string)[1].rstrip()
+                    buffer_channel_time_count += 1
+
+    buffer_channel_time_total = int(buffer_channel_time / buffer_channel_time_count)
+
+    return {
+        'buffer_channel_time': int(buffer_channel_time_total),
     }
 
 
@@ -120,15 +184,35 @@ def main():
     # connection.admin.authenticate(user, pasw, mechanism='SCRAM-SHA-1')
     # print("Connected to mongo ...")
 
+    base_record = {
+        'count': args.count,
+        'name': args.name,
+        'nodes': int(args.nodes),
+        'duration': int(args.time),
+        'timeout': int(args.timeout),
+        'size': int(args.size),
+        'created': datetime.now(),
+    }
+
     if args.operation == "fail":
         collection = db.full_fails
-        record = failfunc(args)
+        record = failfunc()
     elif args.operation == "messagecount":
         collection = db.sent_messages
-        record = msgcountfunc(args)
+        record = msgcountfunc()
+    elif args.operation == "avgmediumtime":
+        collection = db.medium_time
+        record = avgmediumtimefunc()
+    elif args.operation == "election":
+        collection = db.elections
+        record = electionfunc()
+    elif args.operation == "bufferchannel":
+        collection = db.bufferchannel
+        record = channelfunc()
 
     # insert the record
     print("Inserting record ...")
+    record.update(base_record)
     collection.insert_one(record)
 
     print("Closing ...")
