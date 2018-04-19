@@ -32,6 +32,17 @@ def msgcountfunc():
                 if sending_message_string in line:
                     messages_sent += 1
 
+    sending_ping_string = "RAFT_SENDING_PING=1"
+    ping_sent = 0
+
+    # iterate for each file path in the list
+    for fp in filesets:
+        # Open the file in read mode
+        with open(fp, 'r') as f:
+            for line in f:
+                if sending_ping_string in line:
+                    ping_sent += 1
+
     message_size_string = "RAFT_MESSAGE_SIZE="
     messages_size = 0
 
@@ -47,6 +58,7 @@ def msgcountfunc():
 
     return {
         'messages_count': int(messages_sent),
+        'ping_count': int(ping_sent),
         'messages_size': int(messages_size_total),
     }
 
