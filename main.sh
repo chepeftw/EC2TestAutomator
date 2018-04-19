@@ -219,7 +219,7 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
             fi
 
             echo "Waiting... ${TIMEOFCHANGE} and ${TOTAL_LINES} => ${OUTPUT9}"
-            sleep 5
+            sleep 1
         done
 
         cd /home/ubuntu/EC2TestAutomator
