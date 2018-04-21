@@ -11,7 +11,7 @@ InstType="$7"
 Speed="$8"
 CryptoPiece="$9"
 
-AMI_SINGLE="ami-80d92bf8"
+AMI_SINGLE="ami-391c7241"
 
 aws ec2 run-instances \
 	--image-id ${AMI_SINGLE} \
