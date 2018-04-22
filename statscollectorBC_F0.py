@@ -24,24 +24,8 @@ def msgcountfunc():
     sending_message_string = "RAFT_SENDING_MESSAGE=1"
     messages_sent = 0
 
-    # iterate for each file path in the list
-    for fp in filesets:
-        # Open the file in read mode
-        with open(fp, 'r') as f:
-            for line in f:
-                if sending_message_string in line:
-                    messages_sent += 1
-
     sending_ping_string = "RAFT_SENDING_PING=1"
     ping_sent = 0
-
-    # iterate for each file path in the list
-    for fp in filesets:
-        # Open the file in read mode
-        with open(fp, 'r') as f:
-            for line in f:
-                if sending_ping_string in line:
-                    ping_sent += 1
 
     message_size_string = "RAFT_MESSAGE_SIZE="
     messages_size = 0
@@ -51,7 +35,11 @@ def msgcountfunc():
         # Open the file in read mode
         with open(fp, 'r') as f:
             for line in f:
-                if message_size_string in line:
+                if sending_message_string in line:
+                    messages_sent += 1
+                elif sending_ping_string in line:
+                    ping_sent += 1
+                elif message_size_string in line:
                     messages_size += int(line.split(message_size_string)[1].rstrip())
 
     messages_size_total = int(messages_size / messages_sent)
@@ -95,14 +83,9 @@ def electionfunc():
     winner = ""
     winner_count = 0
 
-    # iterate for each file path in the list
-    for fp in filesets:
-        # Open the file in read mode
-        with open(fp, 'r') as f:
-            for line in f:
-                if winner_string in line:
-                    winner = line.split(winner_string)[1].rstrip()
-                    winner_count += 1
+    reverse_string = "RAFT_REVERSE_WINNER="
+    reverse = ""
+    reverse_count = 0
 
     election_time_string = "RAFT_ELECTION_TIME="
     election_time = 0
@@ -113,7 +96,13 @@ def electionfunc():
         # Open the file in read mode
         with open(fp, 'r') as f:
             for line in f:
-                if election_time_string in line:
+                if winner_string in line:
+                    winner = line.split(winner_string)[1].rstrip()
+                    winner_count += 1
+                elif reverse_string in line:
+                    reverse = line.split(reverse_string)[1].rstrip()
+                    reverse_count += 1
+                elif election_time_string in line:
                     election_time += int(line.split(election_time_string)[1].rstrip())
                     election_time_count += 1
 
@@ -121,7 +110,10 @@ def electionfunc():
 
     return {
         'winner': winner,
+        'reverse': reverse,
         'winner_count': int(winner_count),
+        'reverse_count': int(reverse_count),
+        'winner_total': (int(winner_count)-int(reverse_count)),
         'election_time_ns': int(election_time_total),
         'election_time_ms': int(election_time_total/1000000),
         'election_time_s': int((election_time_total/1000000)/1000),
