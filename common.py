@@ -15,7 +15,7 @@ def insertmultirecord(collection, records, base_record):
     # insert the record
     for i in range(len(records)):
         print("Inserting record " + str(i) + " ...")
-        insertonerecord(collection.raft_sent_messages_pquery, records[i], base_record)
+        insertonerecord(collection, records[i], base_record)
 
 def getMongo():
     # print("Loading config.yml ...")
