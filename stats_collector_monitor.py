@@ -22,7 +22,7 @@ def querycompletefunc():
         with open(fp, 'r') as f:
             for line in f:
                 if query_complete_string in line:
-                    query_complete += int(line.split(query_complete_string)[1].rstrip())
+                    query_complete = int(line.split(query_complete_string)[1].rstrip())
 
                     items.append({'query_complete_ns': int(query_complete),
                                   'query_complete_ms': int(query_complete / 1000000), })
