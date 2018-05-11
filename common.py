@@ -45,7 +45,7 @@ def getDatabase(connection):
 
 
 def getBaseRecord(args):
-    return{
+    return {
         'count': args.count,
         'name': args.name,
         'nodes': int(args.nodes),
@@ -67,3 +67,5 @@ def addArgumentsToParser():
     parser.add_argument("-np", "--nodepause", action="store", help="The pause of the nodes expressed in s")
     parser.add_argument("-cp", "--cryptopiece", action="store", help="The piece of the crypto puzzle")
     parser.add_argument("-ct", "--count", action="store", help="The piece of the crypto puzzle")
+
+    return parser
