@@ -204,14 +204,14 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
                 GLOBAL_TOTALOFLINES=${TOTAL_LINES}
                 GLOBAL_TIMEOFCHANGE=${TIMEOFCHANGE}
                 OUTPUT9="updating"
-            elif [ ${TIMEDIFF} -gt 180 ]; then
+            elif [ ${TIMEDIFF} -gt 60 ]; then
                 echo "There is a big problem man!"
                 OUTPUT9="darkz vader"
                 DARKZ_VADER=1
                 break
             fi
 
-            if [ ${TIMEDIFF} -gt 480 ]; then
+            if [ ${TIMEDIFF} -gt 240 ]; then
                 echo "Too much time!!! (10min)"
                 OUTPUT9="too much time"
                 DARKZ_VADER=1
