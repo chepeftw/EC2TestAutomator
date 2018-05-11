@@ -225,29 +225,38 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
         cd /home/ubuntu/EC2TestAutomator
 
         if [ ${DARKZ_VADER} -eq 0 ]; then
-            CMD_BASE="python3 statscollectorBC_F0.py -ns ${TS_SPEED} -np ${TS_PAUSE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+            ############################################################################################################
+            ############################################################################################################
+            #### Just RAFT metrics
+            CMD_BASE="python3 stats_collector_raft.py -ns ${TS_SPEED} -np ${TS_PAUSE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+            echo ${CMD_BASE}
+            ${CMD_BASE}
 
-            # Counting hashes
-            CMD2="${CMD_BASE} messagecount"
-            echo ${CMD2}
-            ${CMD2}
+            ############################################################################################################
+            ############################################################################################################
+            #### Just ROUTER metrics
+            CMD_BASE="python3 stats_collector_router.py -ns ${TS_SPEED} -np ${TS_PAUSE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+            echo ${CMD_BASE}
+            ${CMD_BASE}
 
-            CMD2="${CMD_BASE} avgmediumtime"
-            echo ${CMD2}
-            ${CMD2}
+            ############################################################################################################
+            ############################################################################################################
+            #### Just MINER metrics
+            CMD_BASE="python3 stats_collector_miner.py -ns ${TS_SPEED} -np ${TS_PAUSE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+            echo ${CMD_BASE}
+            ${CMD_BASE}
 
-            CMD2="${CMD_BASE} election"
-            echo ${CMD2}
-            ${CMD2}
-
-            CMD2="${CMD_BASE} bufferchannel"
-            echo ${CMD2}
-            ${CMD2}
+            ############################################################################################################
+            ############################################################################################################
+            #### Just MONITOR metrics
+            CMD_BASE="python3 stats_collector_monitor.py -ns ${TS_SPEED} -np ${TS_PAUSE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
+            echo ${CMD_BASE}
+            ${CMD_BASE}
 
         else
             echo "This means something went wrong :("
 
-            CMD2="python3 statscollectorBC_F0.py -ns ${TS_SPEED} -np ${TS_PAUSE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE} fail"
+            CMD2="python3 stats_collector_fail.py -ns ${TS_SPEED} -np ${TS_PAUSE} -ct ${COUNTER} ${TS_NAME} ${TS_NODES} ${TS_TIME} ${TS_TIMEOUT} ${TS_SIZE}"
             echo ${CMD2}
             ${CMD2}
         fi
