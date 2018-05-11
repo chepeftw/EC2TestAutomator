@@ -41,7 +41,7 @@ def getMongo():
 
 
 def getDatabase(connection):
-    return connection.blockchain2
+    return connection.blockchain0
 
 
 def getBaseRecord(args):
