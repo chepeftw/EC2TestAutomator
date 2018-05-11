@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import argparse
 import os
 import glob
 import common
