@@ -6,6 +6,23 @@ import common
 
 __author__ = 'chepe'
 
+ids = []
+
+
+def initids():
+    folder = "/home/ubuntu/tap/var/log/"
+    filesets = glob.glob(os.path.join(folder, '**/router.data'), recursive=True)
+
+    query_id_string = "QUERY_ID="
+
+    # iterate for each file path in the list
+    for fp in filesets:
+        # Open the file in read mode
+        with open(fp, 'r') as f:
+            for line in f:
+                if query_id_string in line:
+                    ids.append(line.split(query_id_string)[1].rstrip())
+
 
 def msgcountfunc():
     folder = "/home/ubuntu/tap/var/log/"
@@ -78,17 +95,6 @@ def propagationfunc():
     folder = "/home/ubuntu/tap/var/log/"
     filesets = glob.glob(os.path.join(folder, '**/router.data'), recursive=True)
 
-    query_id_string = "QUERY_ID="
-    ids = []
-
-    # iterate for each file path in the list
-    for fp in filesets:
-        # Open the file in read mode
-        with open(fp, 'r') as f:
-            for line in f:
-                if query_id_string in line:
-                    ids.append(line.split(query_id_string)[1].rstrip())
-
     items = []
 
     for i in range(len(ids)):
@@ -125,6 +131,54 @@ def propagationfunc():
     return items
 
 
+def completionfunc():
+    folder = "/home/ubuntu/tap/var/log/"
+    filesets = glob.glob(os.path.join(folder, '**/router.data'), recursive=True)
+
+    items = []
+
+    for i in range(len(ids)):
+        qid = ids[i]
+
+        query_received_string = "QUERY_TIME_RECEIVED_" + qid + "="
+        query_received = 0
+        query_received_count = 0
+
+        block_received_string = "BLOCK_TIME_RECEIVED_" + qid + "="
+        block_received = 0
+        block_received_count = 0
+
+        # iterate for each file path in the list
+        for fp in filesets:
+            # Open the file in read mode
+            with open(fp, 'r') as f:
+                for line in f:
+                    if query_received_string in line:
+                        query_received += int(line.split(query_received_string)[1].rstrip())
+                        query_received_count += 1
+                    elif block_received_string in line:
+                        block_received += int(line.split(block_received_string)[1].rstrip())
+                        block_received_count += 1
+
+        query_received_avg = 0
+        if query_received_count > 0:
+            query_received_avg = query_received / query_received_count
+
+        block_received_avg = 0
+        if block_received_count > 0:
+            block_received_avg = block_received / block_received_count
+
+        time_total = int(block_received_avg - query_received_avg)
+
+        items.append({
+            'query_received_ns': int(query_received), 'query_received_ms': int(query_received / 1000000),
+            'block_received_ns': int(block_received), 'block_received_ms': int(block_received / 1000000),
+            'completion_time_ns': int(time_total), 'completion_time_ms': int(time_total / 1000000),
+        })
+
+    return items
+
+
 def main():
     parser = common.addArgumentsToParser()
     args = parser.parse_args()
@@ -132,6 +186,8 @@ def main():
     connection = common.getMongo()
     db = common.getDatabase(connection)
     base_record = common.getBaseRecord(args)
+
+    initids()
 
     # args.operation == "fail"
     common.insertonerecord(db.router_sent_messages, msgcountfunc(), base_record)
@@ -141,6 +197,9 @@ def main():
 
     # args.operation == "querypropagation"
     common.insertmultirecord(db.router_query_propagation, propagationfunc(), base_record)
+
+    # args.operation == "completiontime"
+    common.insertmultirecord(db.router_query_completion, completionfunc(), base_record)
 
     print("Closing ...")
     # close the connection to MongoDB
