@@ -30,6 +30,7 @@ def querycompletefunc():
         qid = ids[i]
 
         query_complete_string = "QUERY_COMPLETE_" + qid + "="
+        print("Looking for " + query_complete_string + "!")
 
         # iterate for each file path in the list
         for fp in filesets:
@@ -42,6 +43,7 @@ def querycompletefunc():
                         items.append({'query_complete_ns': int(query_complete),
                                       'query_complete_ms': int(query_complete / 1000000), })
 
+    print("Finishing querycompletefunc with  " + len(items) + " items!")
     return items
 
 
@@ -105,6 +107,7 @@ def accuracyfunc(nodes):
                       'block_valid_general_ratio_percentage': float(block_valid * unit * 100),
                       'block_invalid_general_ratio_percentage': float(block_invalid * unit * 100), })
 
+    print("Finishing querycompletefunc with  " + len(items) + " items!")
     return items
 
 

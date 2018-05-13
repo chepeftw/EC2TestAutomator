@@ -6,7 +6,6 @@ from datetime import datetime
 
 def insertonerecord(collection, record, base_record):
     # insert the record
-    print("Inserting record ...")
     record.update(base_record)
     collection.insert_one(record)
 
@@ -42,6 +41,7 @@ def getMongo():
 
 def getDatabase(connection):
     return connection.blockchain0
+    # return connection.blockchain1
 
 
 def getBaseRecord(args):
