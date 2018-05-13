@@ -204,7 +204,7 @@ while [  ${COUNTER} -lt ${TS_CYCLES} ]; do
                 GLOBAL_TOTALOFLINES=${TOTAL_LINES}
                 GLOBAL_TIMEOFCHANGE=${TIMEOFCHANGE}
                 OUTPUT9="updating"
-            elif [ ${TIMEDIFF} -gt 45 ]; then
+            elif [ ${TIMEDIFF} -gt 70 ]; then
                 echo "There is a big problem man!"
                 OUTPUT9="darkz vader"
                 DARKZ_VADER=1

@@ -171,9 +171,12 @@ def completionfunc():
         time_total = int(block_received_avg - query_received_avg)
 
         items.append({
-            'query_received_ns': int(query_received), 'query_received_ms': int(query_received / 1000000),
-            'block_received_ns': int(block_received), 'block_received_ms': int(block_received / 1000000),
-            'completion_time_ns': int(time_total), 'completion_time_ms': int(time_total / 1000000),
+            # 'query_received_ns': int(query_received),
+            'query_received_ms': int(query_received / 1000000),
+            # 'block_received_ns': int(block_received),
+            'block_received_ms': int(block_received / 1000000),
+            # 'completion_time_ns': int(time_total),
+            'completion_time_ms': int(time_total / 1000000),
         })
 
     return items
