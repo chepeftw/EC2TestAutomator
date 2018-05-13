@@ -9,23 +9,38 @@ __author__ = 'chepe'
 
 def querycompletefunc():
     folder = "/home/ubuntu/tap/var/log/"
-    filesets = glob.glob(os.path.join(folder, '**/monitor.data'), recursive=True)
+    filesets = glob.glob(os.path.join(folder, '**/router.data'), recursive=True)
 
-    query_complete_string = "QUERY_COMPLETE="
-    query_complete = 0
-
-    items = []
+    query_id_string = "QUERY_ID="
+    ids = []
 
     # iterate for each file path in the list
     for fp in filesets:
         # Open the file in read mode
         with open(fp, 'r') as f:
             for line in f:
-                if query_complete_string in line:
-                    query_complete = int(line.split(query_complete_string)[1].rstrip())
+                if query_id_string in line:
+                    ids.append(line.split(query_id_string)[1].rstrip())
 
-                    items.append({'query_complete_ns': int(query_complete),
-                                  'query_complete_ms': int(query_complete / 1000000), })
+    filesets = glob.glob(os.path.join(folder, '**/monitor.data'), recursive=True)
+
+    items = []
+
+    for i in range(len(ids)):
+        qid = ids[i]
+
+        query_complete_string = "QUERY_COMPLETE_" + qid + "="
+
+        # iterate for each file path in the list
+        for fp in filesets:
+            # Open the file in read mode
+            with open(fp, 'r') as f:
+                for line in f:
+                    if query_complete_string in line:
+                        query_complete = int(line.split(query_complete_string)[1].rstrip())
+
+                        items.append({'query_complete_ns': int(query_complete),
+                                      'query_complete_ms': int(query_complete / 1000000), })
 
     return items
 
