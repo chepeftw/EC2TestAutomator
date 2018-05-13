@@ -87,14 +87,12 @@ def accuracyfunc(nodes):
 
         total_blocks = block_valid + block_invalid
 
-        if total_blocks == 0:
-            unitbs = float(0)
-        else:
+        unitbs = float(0)
+        if total_blocks > 0:
             unitbs = float(1 / total_blocks)
 
+        unit = float(0)
         if nodes == 0:
-            unit = float(0)
-        else:
             unit = float(1 / nodes)
 
         items.append({'block_valid': int(block_valid), 'block_invalid': int(block_invalid),

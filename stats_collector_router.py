@@ -32,7 +32,9 @@ def msgcountfunc():
                 elif message_size_string in line:
                     messages_size += int(line.split(message_size_string)[1].rstrip())
 
-    messages_size_total = int(messages_size / messages_sent)
+    messages_size_total = 0
+    if messages_sent > 0:
+        messages_size_total = int(messages_size / messages_sent)
 
     return {
         'messages_count': int(messages_sent),
@@ -61,7 +63,10 @@ def msgcountpqueryfunc():
                     bothmsgs = line.split("||||")
                     messages_size = int(bothmsgs[0].split(message_size_string)[1].rstrip())
                     messages_sent = int(bothmsgs[1].split(sending_message_string)[1].rstrip())
-                    messages_size_total = int(messages_size / messages_sent)
+
+                    messages_size_total = 0
+                    if messages_sent > 0:
+                        messages_size_total = int(messages_size / messages_sent)
 
                     items.append({'messages_count': int(messages_sent), 'messages_size': int(messages_size),
                                   'messages_size_total': int(messages_size_total), })

@@ -32,7 +32,9 @@ def msgcountfunc():
                 elif message_size_string in line:
                     messages_size += int(line.split(message_size_string)[1].rstrip())
 
-    messages_size_total = int(messages_size / messages_sent)
+    messages_size_total = 0
+    if messages_sent > 0:
+        messages_size_total = int(messages_size / messages_sent)
 
     return {
         'messages_count': int(messages_sent),
@@ -61,7 +63,10 @@ def msgcountpqueryfunc():
                     bothmsgs = line.split("||||")
                     messages_size = int(bothmsgs[0].split(message_size_string)[1].rstrip())
                     messages_sent = int(bothmsgs[1].split(sending_message_string)[1].rstrip())
-                    messages_size_total = int(messages_size / messages_sent)
+
+                    messages_size_total = 0
+                    if messages_sent > 0:
+                        messages_size_total = int(messages_size / messages_sent)
 
                     items.append({'messages_count': int(messages_sent), 'messages_size': int(messages_size),
                                   'messages_size_total': int(messages_size_total), })
@@ -86,7 +91,9 @@ def avgmediumtimefunc():
                     message_avgtime += int(line.split(message_avgtime_string)[1].rstrip())
                     message_avgtime_count += 1
 
-    messages_avgtime_total = int(message_avgtime / message_avgtime_count)
+    messages_avgtime_total = 0
+    if message_avgtime_count > 0:
+        messages_avgtime_total = int(message_avgtime / message_avgtime_count)
 
     return {
         'average_medium_time': int(messages_avgtime_total),
@@ -124,7 +131,9 @@ def electionfunc():
                     election_time += int(line.split(election_time_string)[1].rstrip())
                     election_time_count += 1
 
-    election_time_total = int(election_time / election_time_count)
+    election_time_total = 0
+    if election_time_count > 0:
+        election_time_total = int(election_time / election_time_count)
 
     return {
         'winner': winner,
@@ -155,7 +164,9 @@ def channelfunc():
                     buffer_channel_time += int(line.split(buffer_channel_time_string)[1].rstrip())
                     buffer_channel_time_count += 1
 
-    buffer_channel_time_total = int(buffer_channel_time / buffer_channel_time_count)
+    buffer_channel_time_total = 0
+    if buffer_channel_time_count > 0:
+        buffer_channel_time_total = int(buffer_channel_time / buffer_channel_time_count)
 
     return {
         'buffer_channel_time': int(buffer_channel_time_total),
