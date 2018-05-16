@@ -52,6 +52,7 @@ def getBaseRecord(args):
         'duration': int(args.time),
         'timeout': int(args.timeout),
         'size': int(args.size),
+        'speed': int(args.nodespeed),
         'created': datetime.now(),
     }
 
